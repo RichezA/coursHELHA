@@ -1,0 +1,20 @@
+RESEAU AVANCÉ 12-12	
+
+RADVD -> annonce de routeur IPv6
+À travers de de vmware on peut travailler à deux ou tout seul(avec deux vm)
+
+DHCP:
+
+	Protocole Client-Serveur
+	Serveur: Composant qui est à l'écoute des potentiels clients afin de leur donner des adresses ip ainsi que des informations additionnelles
+	Client: Demande au serveur une adresse 
+
+DHCP s'appuie sur la couche transport qui s'appuie sur l'IP qui s'appuie sur la couche 2
+
+CLIENT:
+	DHCP
+	DHCPDISCOVER ->BROADCAST 255.255.255.255
+		IPSOURCE: 0.0.0.0
+	DHCPREQUEST
+	DHCPOFFER
+	DHCPACK

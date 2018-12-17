@@ -1,0 +1,32 @@
+Slide 5 
+ à gauche -> client avec DNS Resolver
+ Dès que l'on tape une URL (e.g. http://www.esit.be) pour que l'on puisse dialoguer on doit choisir
+ un protocole de la couche transport (TCP/UDP + Port source, Port de destination), avec couche inférieur on doit choisir
+ l'adresse IP (IP source, IP destination)
+
+ Lorsque l'on tape l'adresse :
+ 1) On envoie une requête au DNS Resolver -> Doit découvrir IP pour URL (Résolution directe)
+ 2) On va aller voir d'abord dans le fichier host (pour voir si association entre un nom et une IP)
+ 3) Si pas dans host, on va aller voir dans la cache DNS (TTL)
+ 4) Si dans aucun des autres, on va interroger l'extérieur (DNS Provider)
+
+ Au niveau du Provider
+    Est-ce que l'on a autorité sur cette zone ?
+    Est-ce que l'on a l'information en cache ? (TTL)
+    Si elle ne l'a pas le serveur demandera à d'autres serveurs (2 types de requêtes)
+        Requête itérative : Si pas d'info le serveur répond qu'il ne l'a pas -> FIN
+        Requête récursive : Si pas d'autorité et pas d'info dans sa cache, le serveur se "démerde" pour avoir l'info
+    Hiérarchie : 
+            Root                    Sommet de la hiérarchie
+    .com .net .org .mil .be         Choix de l'extension (libre à tous depuis 2013)
+                         ^
+                        esit.be     Domaine -> Registor , doit etre lié à un serveur DNS (adresse IP fixe publique)
+                          ^
+                        www.esit.be top level domain (doit connaitre le domaine)
+
+1) On demande (requête récursive) au serveur DNS Provider le DNS de .be
+2) On demande (requête itérative) au Serveur Root l'ip Du DNS serveur BE
+3) On demande au DNS Serveur be l'ip du DNS Serveur qui gère esit.be
+4) Le provider envoie une requête vers le serveur DNS qui gère esit.be pour connaitre l'IP (mise en cache provider et local)
+5) On peut maintenant faire des requêtes HTTP sur le port 80 du serveur
+

@@ -1,0 +1,34 @@
+VLAN 20 POSTES
+
+en
+conf t
+vlan 30
+name Vlan_Dev
+exit
+interface range FastEthernet 0/1-20
+switchport access vlan 30
+no shutdown
+exit
+
+VLAN 15,10 POSTES
+
+en
+conf t
+vlan 10
+name Vlan_Admin
+exit
+vlan 20
+name Vlan_HD
+exit
+interface range FastEthernet 0/1-15
+switchport access vlan 10
+no shutdown
+exit
+interface range FastEthernet 0/16-24
+switchport access vlan 20
+no shutdown 
+exit
+interface GigabitEthernet 0/1
+switchport access vlan 20
+no shutdown
+exit

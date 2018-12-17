@@ -1,0 +1,33 @@
+record SOA
+    ns.wilfart.net = serveur qui a autorité
+    1 serveur d'autorité mais plusieurs servers de sauvegarde (doit toujours être tenu à jour)
+    Au moins 2 serveurs esclave pour un serveur maître
+    @ IN (internet) et nom du record
+    @ IN SOA
+    @ IN NS
+    @ IN A
+    ex :
+    $TTL    604800 => Dans les anciennes versions de BIND TTL était avec les autres paramètres
+    @ IN SOA ns.wilfart.net dnsmaster.wilfart.net (
+                201810171               ;   Serial  (date à l'envers + numéro de version)
+                   640800               ;   Refresh (1 semaine <=> 1W)
+                    86400               ;   Retry   (1 jour <=> 1D)
+                  2419200               ;   Expire (4 semaines <=> 4W)
+                   604800 )             ;   Negative Cache TTL 
+    ;
+    example.com 3600 SOA dns.example.com hostmaster.example.com (
+                201810171               ;   Serial YYYYMMDD
+                86400                   ;   Refresh
+                7200                    ;   Retry
+                3600000                 ;   Expire
+                172800                  ;   Minimum
+    ) 
+$TTL 604800
+    ^
+TTL global pour toute la zone et par défaut pour tous les records
+
+@ 3600 SOA
+    3600 sec = le TTL pour le record SOA
+
+
+

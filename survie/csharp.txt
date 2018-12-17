@@ -1,0 +1,18 @@
+Administration : 
+	Créer une nouvelle base
+		Créer une table
+			Ajouter des champs à la table
+				Numériques ou alphanumériques
+			Supprimer un champ
+		Renommer une table
+		Supprimer une table
+Utilisation : 
+	Utiliser la base
+		Choisir une base à utiliser
+			Choisir la table à utiliser
+				Ajouter des enregistrements à la table
+				Supprimer des enregistrements à la table
+				Visualiser un table 
+			Requête sur table("afficher les éléments de")
+	Supprimer une base
+	Quitter le programme

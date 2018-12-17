@@ -1,0 +1,32 @@
+en 
+conf t
+hostname Yes
+enable secret po9
+banner motd #Authorizes access only#
+service password-encryption
+no ip domain-lookup 		// Evite de rechercher sur internet si cmd pas trouvé
+
+int g0/0  			// Accède à l'interface Gigabit Ethernet 0/0  g0/0
+ip address 180.15.20.2 255.255.255.248
+no shut
+
+ip domain-name facebook.com
+crypto key generate rsa
+1024
+
+ip ssh version 2 
+username p09 secret p09
+line vty 0 15
+no transport input
+transport input ssh
+login local
+
+exit
+
+line aux 0 
+password p09
+login
+exit
+
+-------------------------------------------------------------------------------------
+

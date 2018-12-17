@@ -1,0 +1,63 @@
+Les impédances
+  
+    Dans une résistance, u et i sont en phase
+
+    Condo parfait (C): courant en avance sur la tension (90 degrés)
+
+    Self parfaite (L): courant en retard de 90 degrés sur la tension
+
+    Impédance (Z) d'une résistance = R
+    Impédance (Z) d'un condo = Xc = 1/ωc = 1/2π*f*c
+    Impédance (Z) d'une self = Xl = ω.L = 2π*f*L
+    
+    UR = R * I
+    UL = Xl * I Réactance
+    U = Z * I
+
+    1) R.C. série
+
+    Qu'est-ce qui est commun en série dans un montage ? Le courant
+        Si le couant est le même => dans la résistance U et I sont en phase
+
+    Tension du circuit => Somme des deux tensions = somme vectorielle 
+
+    UR = R * I
+    UC = Xc * I
+    Z = sqr(R² + Xc²)
+
+    2) R.L. série
+
+    Une bobine de fil = circuit R.L.
+
+    U = Z * I
+    Ul = Xl * I
+    Z = sqr(R² + Xl²)
+
+    LES DÉPHASAGES SONT MAUVAIS DANS UNE INSTALLATION
+
+Les puissances
+
+    P = U * I * cos φ Puissance active
+    Q = U * I * sin φ Puissance réactive
+    S = U * I Puissance apparente = vraie puissance consommée 
+
+    cos = adj/hyp
+
+    1) Sur un R.L.
+
+    Ul = U * sin φ (car dans Rl tension en avance donc à 90 degré du courant => axe des ordonnés => sinus)
+    U = UR * UL => vectoriel
+    U = sqr (UR² + UL²) => algébrique
+
+    S = vraie puissance consommée en Voltampère -> VA
+    P = puissance active car utile en Watt -> W
+    Q = puissance réacive, elle est perdue, gaspillée en VAR
+
+    Un compteur d'énergie mesure des kiloWatts * heures => énergie au départ de la puissance active 
+
+    bonne consommation -> φ doit être proche de 1
+    φ proche de 0
+    Pour les entreprises, on mesure(enregistre) le cosinus φ pour adapter les prix
+
+    Ajout d'un condensateur en parallèle
+    

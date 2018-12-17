@@ -1,0 +1,49 @@
+192.168.0.1
+255.255.255.0
+
+1100 0000.1010 1000.0000 0000.0000 0001
+1111 1111.1111 1111.1111 1111.0000 0000
+
+192.168.0 => NETWORK PORT
+192.168.0.0 => NET ADX
+192.168.0.1 => FH
+192.168.0.254 => LH
+192.168.0.255 => BROADCAST ADX
+
+
+SkyBlue Cyan Network
+
+172.16.0.0
+
+172.16.0.0 => NET ADX
+172.16.0.1 => FH
+172.16.0.254 => LH
+172.16.0.255 => BROADCAST ADX
+/24
+255.255.255.0
+
+Red Network
+
+172.16.1.0 => NET
+172.16.1.1 => FH
+172.16.1.62 => LH
+172.16.1.63 => BROADCAST ADX
+/26
+255.255.255.192
+
+Yellow SubMarine Network
+
+172.16.1.64 => NET
+172.16.1.65 => FH
+172.16.1.96 => LH
+172.16.1.97 => BR
+/27
+255.255.255.224
+
+
+10.84.0.0
+324 Network Juliopolipomatos
+223 Network Polikikilomazifez
+3   Network Willyopilamazitox
+76  Network Olyveratoretazerpp
+

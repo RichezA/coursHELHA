@@ -1,0 +1,4 @@
+Wireshark : 
+	Filtres : 
+		tcp = tcp only
+		host XXX.XXX.XXX.XXX = IPv4 address XXX.XXX.XXX.XXX

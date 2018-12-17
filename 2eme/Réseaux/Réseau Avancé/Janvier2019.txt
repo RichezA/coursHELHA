@@ -1,0 +1,337 @@
+Réseau avancé
+
+Intro
+	TCP/IP utilise des adresses sur 32 bits
+	DNS = Domain Name System = ensemble de protocoles et services qui permettent aux users d'utiliser un nom symbolique hiérarchisé pour un ordinateur. 
+	Fonction la plus connue: faire correspondre un nom et une IP.
+		Plus facile pour les gens de retenir le nom que l'adresse IP
+	Le nom peut rester le même mais l'admin réseau peut changer l'IP associée
+
+	Avant le DNS, l'utilisation des noms se faisait par l'usage de fichiers HOSTS (contient des IP avec des noms associés). Sur Internet, le fichier était administré de façon centrale et on devait donc charger une copie de ces fichiers réguliérement. Avec l'augmentation de machines sur Internet, il a fallu trouver une autre solution => DNS.
+
+	Le DNS se situe sur la couche 7 du modèle OSI, on peut donc l'utiliser en UDP ou en TCP, il fonctionne sur le port 53
+
+2 Structure du DNS
+	Le DNS, travaille en divisant Internet en ensemble de domaines ou réseaux qui peuvent être divisés en sous domaines.
+
+	La structure ressemble à une arborescence où le sommet et le Top Level Domain. Ce niveau est géré par L'Internet Network Information Center = Internic. Il comprend les domaines pour organisations (org, com, info, edu, etc) et un domaine par pays. Les domaines de pays sont un groupe de deux à trois lettres (be, fr, uk, etc).
+
+	Un domaine peut contenir soit des hosts, soit des sous domaines. Chaque domaine s'identifie par rapport à son parent en étant séparé par un point. on parle souvent pour les noms de domaines de noms pointés. 
+
+	E.G. : Le site de la HELHa est un sous domaine du domaine be = helha.be	. Chaque sous domaine peut dont aussi contenir un sous domaine ou des hosts. On peut donc retrouver des ordinateurs tels que www.helha.be ou ac.helha.be (sous domaine de l'extranet ac.helha.be)
+
+3 Serveur de noms
+	
+	Chaque serveur de noms de domaines gère une zone distincte du réseau. L'ensemble des machines gérées par le serveur est une zone. Un serveur peut gérer plusieurs zones. 
+
+	On peut donc imaginer le domaine helha.be comprenant la zone helha.be et la zone info3.helha.be. Ces deux zones peuvent être gérées par un serveur unique ou deux serveurs distincts. Ces serveurs ont donc l'autorité sur leur zone.
+
+	La plupart des zones possèdent plusieurs serveurs de noms:
+		Un serveur de noms primaire
+		Un serveur de nom secondaire ou de sauvegarde.
+
+	Un serveur primaire reçoit les données pour sa zone de fichiers locaux, tout changement dans une zone se fait sur le serveur de noms primaire. 
+
+	Un serveur secondaire reçoit les données pour sa zone d'un autre serveur de noms qui a l'autorité sur cette zone. Ces serveurs communiquent ensemble par un protocole de transfert de zone.
+
+	DNS apparait comme un ensemble de zones emboîtées, chaque serveur de noms communique avec un autre serveur de noms au dessus de lui et des fois aussi en dessous de lui s'il y'en a un.
+
+	Chaque zone a au moins un serveur responsable qui connait la correspondance entre les noms d'ordis et les adresses dans sa zone.
+
+	Chaque serveur connait aussi l'adresse d'au moins un autre serveur de noms.
+
+	Les messages qui transitent entre les serveurs de noms utilisent le protocole UDP car elle apporte de meilleures performances MAIS TCP est utilisé pour la mise à jour des DB grâce à sa fiabilité
+
+	Quand un user a besoin de résoudre un nom vers une IP, une demande est envoyé vers un service de résolution. Celui-ci envoie une demande vers un serveur de nom qui va voir s'il contient l'adresse correspondante dans ses tables. S'il ne la trouve pas, il envoie donc la demande vers un autre serveur. Les serveurs de noms et les resolvers utilisent une cahce locale pour mémoriser le résultat des requêtes les plus récentes à l'extérieur de la zone.
+
+4 Résolution des noms
+
+	Il y'a deux types de demandes qu'un client peut faire à un serveur DNS: récursif, itératif et invere.
+
+	Résolution de nom: Un serveur DNS peut être le cient d'un autre serveur DNS
+
+	Le serveur DNS reçoit une demande du client. Ce système envoie une requête à un serveur différent pour chaque domaine. 
+
+	Une requête récursive place le moins possible de charge sur le client (tout est sur le serveur original). Le serveur DNS recevant la requête peut retourner une réponse avec l'IP ou un message d'erreur expliquant pourquoi il ne peut pas le résoudre.
+
+	La plupart des clients DNS utilise des requêtes récursives mais il y'a les requêtes itératives (qui nécessitent un plus grand effort de la part du client). 
+
+	Quand un serveur DNS reçoit une requête itérative, il ne retourne que l'information qu'il possède sans effectuer de requête suppléntaire. Si le sevreur ne possède pas d'information, il peut fournir l'adresse d'un sevreur de noms racine.
+
+	Le client est responsable de la transmission de sa requête à un des serveurs indiqués dans la réponse. Ces requêtes ne sont pas réservés aux clients. Quand un serveur DNS envoie une requête à un autre serveur DNS, il fonctione aussi comme un client et peut être configurer pour envoyer un des types de requêtes
+
+	La première requête est une récursive envoyé par le résolveur vers le DNS paramétré dans la pile TCPIP. S'il ne peut pas répondre, il va envoyer différentes requêtes pour avoir la réponse => requêtes itératives. 
+
+	Les serveurs DNS sont souvent configurés pour accepter les requêtes itératives pour leurs zones mais seulement les récursives pour leur client
+
+	Pour améliorer les performances, les résolveurs et serveurs récursifs possèdent un cache interne. Dans un réseau local, on peut utiliser un serveur qui n'a pas d'autorité sur les zones mais qui sert de serveur de cache en relayant les demandes récursives vers un autre serveur externe.
+
+	Si les serveurs du TLD fournissent des informations sur les serveurs de noms capables de répondre aux requêtes itératives. Le serveur récursif ne peut pas déterminer de façon dynamique la liste des adresses des serveurs du TLD. Ces infos sont donc dans tous les serveurs DNS. La première démarche est de mettre à jour cette liste d'adresses dès l'installation du serveur DNS
+
+	Il y'a 13 serveurs racine et appartiennent au même domaine root-servers.net . Les noms de ces serveurs vont de a.root-serves.net jusqu'à m.root-servers.net . Ils sont gérés par douze organisations : 2 euro, 1 japonaise et 9 US. Gestion multicast => répartis à travers le monde.
+
+5 Les fichiers DNS
+	
+	On se limitera à la config d'un serveur DNS BIND (9). Permet d'appréhender les RFC que la config trop limitative d'un serveur Microsoft.
+	On retrouve dans le répertoire /etc/bind, les fichiers:
+		named.conf = fichier principal comprenant des inclusions des deux autres fichiers, comprend aussi la dft des zones locales
+		named.conf.local = correspond au fichier de dft des différentes zones qu'on souhaite ajouter au serveur
+		named.conf.options = options de config globale du serv et valables par défaut pour toutes les zones définies.
+	Une des options correspond à l'emplacement ou vont se trouver les fihciers associés à chaque zone définie. le nom est laissé à la liberté de l'admin du serveur.
+		e.g.: ```
+				options {
+					directory "var/cache/bind";
+				}
+			   ```
+	Cette option précise que les fichiers de zone se situeront dans le répertoire donné ci-dessus.
+
+5.1 Définition des zones (named.conf.local)
+	
+	Dans named.conf, on peut voir l'instruction -> include "/etc/bind/named.conf.local";
+	On retrouve la définition des zones
+
+5.2 Types de zones
+	
+	Il y'a cinq types de zones différentes:
+
+	master : Serveur a une copie maître des data pour la zone + a autorité sur la zone
+
+	slave : Réplique d'une zone maître. Contient la liste "masters" et contient une ou plusieurs IP auxquels l'esclave peut se co pour obtenir une update des fichiers
+
+	stub : Comme une zone esclave MAIS contient seulement les records NS de la zone maitre, pas la zone entière
+
+	forward : Utile pour rediriger vers un autre serveur. Est dans la dft des options mais du coup vient cacher les déclarations similaires dans les options.
+
+	hint : ensemble des serveurs de noms racines.
+
+5.3 Exemples de dft de zones
+
+	```
+	zone "helho.be" in {
+		type master;
+		file "helho.be.zone";
+	};
+	```
+	> Le serveur a autorité sur la zone helho.be -> type master. (Nom du fichier = helho.be.zone sera dans le directory indiqué par l'option dans named.conf.options)
+
+	```
+	zone "helha.be" in {
+		type slave;
+		file "slave.helha.be.zone";
+		masters{
+			193.190.66.4;
+			};
+	};
+	```
+	> Le serveur n'a pas d'autorité. Sert de serveur de sauvegarde -> type slave. (Nom du fichier = slave.helha.be.zone) + contenu pas défini sur le serv -> reçoit une copie du serveur qui a autorité (IP fournie dans `masters`)
+
+	DANS NAMED.CONF :
+	```
+	zone "."{
+		type hint;
+		file "/etc/bind/db.root";
+	};
+	```
+	> fichier contenant la liste des serv du TLD.
+
+5.4 Fichier de zone (Association directe)
+
+	Fichier qui contient des enregistrements de ressources (records) pour la zone gérée de ce serveur. En format ASCII (facile à m-à-j).
+
+	Le premier record est toujours un record SOA :
+	```
+	IN SOA <source host> <email de contact><serial number><refresh time><try interval><expire time><TTL>
+	```
+	source host = hote où le fichier est maintenu
+	email = email du responsable du fichier de zone pour le domaine
+	serial no = Numéro de version de fichier (incrémenté à chaque modif). Utilisé pour voir s'il on doit m-à-j
+	refresh rate = temps en seconde qu'un serv secondaire doit attendre pour savoir si le fichier de zone a été modif et qu'il faut m-à-j.
+	try int = Intervalle en seconde qu'un serv secondaire doit attendre pour réessayer un transfert raté.
+	expire time = temps en seconde qu'un serv secondaire doit attendre pour essayer de charger une zone
+	TTL = Time To Live = Temps associé à la mise en cache sur les serveurs récursifs, valeur de cache négative
+
+	Après le SOA, nous pouvons avoir des records:
+
+	A = enregistrement IPv4 => correspondance nom - IP
+	AAAA = enregistrement IPv6 => correspondance nom - IP
+	CNAME = enregistrement de nom canonique = crée un alias vers un nom d'hote => Utile quand les noms de domaines multiples sont résolus vers une même IP
+	MX = enregistrement échange de courriel. Associé à une préf quand pls serveurs sont définis pour le même domaine.
+	NS = enregistrement de serveur de nom dans les serveurs DNS. Important d'y renseigner le serv primaire et les serv de backup pour que les notifs soient envoyés quand le serial no du fichier de zone change et que le serveur a restart.
+	TXT = Insère un texte quelconque. Informations de type SPF (Sender Policy Framework) pour valider les serveurs de messagerie pour un domaine donné. Utilisé contre le spam.
+
+	EXEMPLE:
+	```
+	$TTL 1W
+	@	IN SOA 		ns.helho.be.  root.helho.be. (
+				92			;serial
+				2D			;refresh
+				4H			;retry
+				6W			;expiry
+				20W)		;minimum
+
+	@ 	IN NS    	ns.helho.be.
+	@   IN NS 		ns.belnet.be.
+
+	@ 	IN MX 	1 	barracuda.helho.be
+	@ 	IN MX 	2	mail.helho.be
+
+	@ 			IN TXT 		"v=spfl mx ptr ip4:193.191.131.9 -all"
+	mail 		IN TXT 		"v=spfl a -all"
+	barracuda 	IN TXT 		"v=spfl a -all" 
+
+	ns 		IN A 	193.191.131.2
+	ns1 	IN A 	193.191.131.10
+	www 	IN A 	193.191.131.8
+	```
+
+5.5 Fichier de zone (Association inverse)
+
+	Fct principale d'un DNS est de retrouver IP à-p-d son nom.
+	Pour limiter l'accès à certains services (pour les membres du domaine), un domaine "in-addr.arpa" a été créé dans l'espace DNS. Nom complet comprend la partie d'IP associée au no du r;eseau mais dans le sens inverse, suivi du domaine in-addr.arpa
+
+	EXEMPLE: 193.191.131.0 => 3 premiers octets sont ceux du réseau. Nom de la zone inversée = 131.191.193.in-addr.arpa
+
+	>Pour une IP classless PLUS DUR.
+	EXEMPLE: 193.191.131.0/27 comprend les 3ers octets mais les 3 bits de poids fort de l'octet suivant => besoin que le serveur qui a autorité sur 193.191.131.0/24 délègue la responsabilité de la reso inverse vers le serveur ns.helho.be
+	=> Provider utilisera dans son fichier de zone inverse (193.191.193.in-addr.arpa) et qui comprendra :
+	0/27 NS ns.helho.be
+		1 CNAME 1.helho.131.191.193.in-addr.arpa.
+
+	> Sur le serv helho.be on doit donc avoir une zone inverse helho.131.191.193.in-addr.arpa.
+	Contenu associé comprendra un record SOA suivi des records NS + PTR
+
+	EXEMPLE:
+	```
+	$TTL 1W
+	@ 	IN SOA 		ns.helho.be root.helho.be (
+				51		; serial 
+				2D		; refresh
+				4H		; retry
+				6W		; expiry
+				20M)	; minimum
+
+	@ 	IN NS 		ns.helho.be.
+	@ 	IN NS 		ns2.helho.be.
+	2 	IN PTR 		ns.helho.be.
+	3 	IN PTR 		nathalie.helho.be.
+	4 	IN PTR 		kameleon.helho.be.
+	5 	IN PTR 		noname.helho.be.
+	```
+
+	> Si on veut tester le fonctionnement de notre DNS on peut utiliser sous linux : dig -x 193.191.131.10
+	On obtient alors:
+	```
+	;;QUESTION SECTION:
+	;10.131.191.193.in-addr.arpa. IN PTR
+	;;ANSWER SECTION:
+	10.131.191.193.in-addr.arpa. 86321 IN CNAME  10.helho.131.191.193.in-addr.arpa.
+	10.helho.131.191.193.in-addr.arpa. 172800 IN PTR acolad.helho.be.
+	;;AUTHORITY SECTION:
+	helho.131.191.193.in-addr.arpa. 172800 IN NS ns2.helho.be.
+	helho.131.191.193.in-addr.arpa. 172800 IN NS ns.helho.be.
+	;;ADDITIONAL SECTION:
+	ns.helho.be. 	172800 IN A 193.191.131.2
+	```
+
+	Première réponse = record CNAME mis en place par le provider
+	Suite = réponse PTR du serveur ns.helho.be.
+
+5.6 Zone de type hint et fichier associé
+
+	fichier de cache contient les infos nécessaires pour résoudre les noms à l'extérieur du domaine qui a autorité. Contient les noms et adresses des serveurs racine. Peut être chargé à l'adresse : FTP://rs.internet.net/domain/named.cache et permet l'update du fichier associé au serveur DNS
+
+5.7 Record MX dans le DNS
+
+	1) Courier envoyé de emile@skynet.be à marcel@helho.be , le courriel arriver sur le serveur de mail sortant configuré dans le client, le serveur vérifie s'il gère le domaine, si oui le courrier est placé dans la boite de réception.
+	2) Le destinataire au domaine helho.be , le serv de courrier sortant va interroger le serveur DNS qui a autorité sur la zone pour connaitre le record MX.
+	3) Quand il a reçu l'info sur le serveur MX, le serveur de mail sortant peut entrer en contact avec le serveur de mail du destinataire.
+	4) Le serveur mail.helho.be vérifie que le destinataire est géré par lui et est placé dans la boite de réception correspondante.
+
+
+DNSSEC
+
+	Pour assurer l'authenticité et l'intégrité, DNSSEC se base sur un modèle de crypto à clé publique. Un serveur d'autorité calcule un hash puis le signe avec une clé privée avant d'envoyer le paquet avec le hash au résolver, qui pourra vérifier l'authenticité et l'intégrité des données en déchiffrant et associant la clé publique à la clé privée. Permet de garantir le fonctionnement des demandes de résolutions classiques => records DNS avec des enregistrements DNSKEY, RRSIG, NSEC, DS ET NSEC3, NSEC3PARAM ajoutés.
+
+Enregistrements liés aux signatures
+
+	Soit la zone esit:
+	```
+	$TTL 86400
+	$origin esit.be.
+
+	@ 10D IN SOA ns1.esit.be. esit-it.experts.be. (
+				2015010103		; serial
+				5H				; refresh
+				3600			; retry
+				1W				; expire
+				1H				; TTL negatif
+				)
+	@ 	IN NS ns1.esit.be.
+	@ 	IN NS ns1.belnet.be.
+	@ 	IN NS ns2.belnet.be.
+
+	@ 	IN A 193.191.131.25
+	@ 	IN AAAA 2001:06a8:3480:2::26
+	ns1 IN A 193.191.131.25
+	ns1 IN AAAA 2001:06a8:3480:2::25
+	www IN A 193.191.131.25
+	www IN AAAA 2001:06a8:3480:2::26
+	```
+	> Enregistrements regroupés en fct du nom et type pour former des RRSET (Record Resource SET).
+	DNSSEC se porte sur un RRSET et pas sur un enregistrement individuel => On prend donc les enregistrements NS associés à esit.be
+
+	```
+	@ IN NS ns1.esit.be.
+	@ IN NS ns1.belnet.be.
+	@ IN NS ns2.belnet.be.
+
+Enregistrements DNSKEY
+
+	Utilisé pour transmettre une clé publique entre le résolveur et le serveur. Associée à la clé privée utilisée par le serveur pour signer les hash des records RRSET. Le resolver utilise donc la clé publique écrit dans DNSKEY pour vérifier la signature du serveur.
+	Une clé publique est associée à une zone, pas à un serveur. 
+	Deux types de clefs : KSK et ZSK.
+	KSK = signe seulement les DNSKEY RRSET
+	ZSK = signe les autres RRSET dans la zone
+
+	Structure des records dans la zone signee esit.be
+	```
+	@ 86400 DNSKEY 256 3 8 (
+			<clé publique>
+			); key id = 6228
+	```
+	86400 = TTL 
+	256 = champs flags (256 = ZSK , 257 = KSK)
+	3 = protocole -> tout le temps 3 pour un record DNSKEY
+	8 = champ algorithme. valeurs pouvant etre utilisés :
+		0 = reserved
+		1 = RSA/MD5
+		2 = Diffie/Hellman
+		3 = DSA/SHA-1
+		4 = reserved
+		5 = RSA/SHA-1
+		8 = RSA/SHA-256  |
+		10 = RSA/SHA-512 | recommandé
+
+Record RRSIG
+
+	Contient la signature de l'enregistrement envoyé par le serveur. Signature obtenue en signant le hash du RRSET avec la clé privée du serveur (contenue dans le record DNSKEY). Signature vérifiée par le resolver 
+	=> IL EXISTE UN RECORD RRSIG POUR CHAQUE RECORD DE LA ZONE DANS LE FICHIER DE ZONE SIGNÉ
+
+	```
+	86400 A 193.191.131.25
+	86400 RRSIG A 8 2 86400 20140714102050 (
+							20140614092050 esit.be.
+							<clé >				)
+	```
+
+	A = 'type covered' = type d'enregistrement signé => RRSET de A
+	8 = algo utilisé (RSA/SHA-256)
+	2 = champ label => niveau de hiérarchie dans le nom contenu dans le RRSET. Ici esit.be contient deux champs (be et esit) => 2.
+		Dans la même zone, pour ns1.esit.be => 3 (be esit ns1)
+	86400 = TTL d'origine
+	20140714102050 = date d'expiration de la signature
+	20140614092050 = date de signature
+	6228 = ID de la clé utilisé. Clé dans le record DNSKEY
+	esit.be = zone qui détient la clé
+
+Les enregistrements liés à la preuve de non existence.

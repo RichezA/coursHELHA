@@ -1,0 +1,21 @@
+apt-get update
+apt-get upgrade
+
+apt-cache search dns | more
+apt-cache search bind | more       (bind = utilitaire utilisé pour les serveurs DNS)
+
+apt-get install bind9
+
+cd/etc
+ls bin*
+cd bind
+ls
+ls -l
+
+
+directory : /var/cache/bind
+                        ^ forward first
+                          forward only
+
+/etc/bind/db.root
+wget --user=ftp --password=ftp ftp://ftp.rs.internic.net/domain/db.cache -O /etc/bind/db.root

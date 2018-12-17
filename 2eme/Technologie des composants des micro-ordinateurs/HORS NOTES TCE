@@ -1,0 +1,12 @@
+HORS NOTES TCE
+
+Remplacer un condensateur par un autre
+1st though: s'il est polarisé, on doit le remplacer par un polarisé
+
+Remplacer un condo polarisé par un non polarisé, c'est possible
+
+On prend deux condos en série avec en parallèle d'un côté avec deux diodes et de l'autres deux résistances une de 10k une de 100k
+bcp plus petit que le non polarisé d'une autre technologie
+
+10 microF sous 240Veff en non polarisé
+Prendre 2C de 22 micros supportent supportant 240 * sqr(2) + sécurité
