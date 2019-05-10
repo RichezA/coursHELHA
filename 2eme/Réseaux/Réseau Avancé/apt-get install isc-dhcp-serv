@@ -1,0 +1,37 @@
+apt-get install isc-dhcp-serv
+
+cd /var/log/ => permet de vérifier les erreurs par rapport à l'OS
+
+head <nomdefichier> = 10 premières entrées
+tail <nomdefichier> = 10 dernières entrées
+
+On peut ajouter des "pipes" à une commande :
+	Sortie standard | redirigé vers entrée d'une autre commande
+
+	ex: tail -n 100 syslog | more
+		tail -n 100 syslog | grep  dhcpd <- récupère le mot que nous recherchons (ici dhcpd)
+
+	dhcpd.conf <- /etc/ <- fichiers de config
+
+	serveur DHCP
+	interface host-only
+	Besoin d'une config pour déranger un minimum l'environnement
+	Config IP fixe -> net 192.168.35.0/24 dhcp 192.168.35.1/24
+	Pool 192.168.35.10 -> 192.168.35.20
+	defgtway -> 192.168.35.200
+	DNS serv -> 192.168.35.2
+	domain-name -> student.local
+
+
+
+	client DHCP
+	interface host-only
+
+	cd /etc/init.d/
+	ls -l
+
+	./isc-dhcp-server status
+
+	tail -n 50 /var/log/syslog | grep dhcpd
+
+	cd /etc/default

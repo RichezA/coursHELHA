@@ -1,0 +1,19 @@
+FTP :
+
+Commande sur le port 21, données sur le port 20 (actif)
+
+Sécurité:
+
+vsftpd -> root
+command ! clair => (user, passwd)
+data ! clair => (infos sensibles)
+
+								  |SSL -> ftps
+user, passwd -> canal de commande |
+				 		|	  	  |SSH -> sftp
+				 		v
+				 	   PORT |
+				 	   		| -> crypté
+				 	   PASV |
+data -> idem
+

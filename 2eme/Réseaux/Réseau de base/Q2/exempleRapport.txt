@@ -1,0 +1,17 @@
+Rapport fait sur Word.
+
+1. Rappel théorique => Expliquer ce qu'on a compris de la théorie et la retranscrire (pas de copy-paste) en l'adaptant à la question.
+	e.g.: On doit mettre une banner motd "xyz" -> commande : banner motd # xyz #
+	On donne un kit de survie sur le laboratoire
+
+2. Problèmes rencontrés => S'il n'y en a pas, pas de section
+	S'il y'en a eu une : expliquer comment l'avoir résolu.
+	Ou si une prise électrique SPÉCIALE est manquante: "Nous avons du chercher la prise électrique du switch XX-XXX-XXX. Solution: on l'a retrouvé une demi-heure après."
+
+3. Les commandes
+/!\ On doit joindre le fichier texte des différentes configs avec le rapport. 
+
+
+4. Les preuves => Screenshot, photo, vidéo (pas en 4k, 144fps, ultra, MXAA, sans effet)
+
+5. Conclusion => Dire si on a estimé plus ou moins de temps pour chaque étape (pour savoir si on budgétise le temps)

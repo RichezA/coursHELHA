@@ -1,0 +1,154 @@
+RESEAU AVANCÉ 12-12	
+
+RADVD -> annonce de routeur IPv6
+À travers de de vmware on peut travailler à deux ou tout seul(avec deux vm)
+
+DHCP:
+
+	Protocole Client-Serveur
+	Serveur: Composant qui est à l'écoute des potentiels clients afin de leur donner des adresses ip ainsi que des informations additionnelles
+	Client: Demande au serveur une adresse 
+
+DHCP s'appuie sur la couche transport qui s'appuie sur l'IP qui s'appuie sur la couche 2
+UDP port 67 et 68 => on trouve l'ensemble des paquets DHCP
+
+Options du DHCP importantes:
+	- 53 = type du paquet envoyé
+	- 61 = ID du client
+	- 50 = On a en mémoire la dernière IP, et en requested IP address notre pc place la dernière IP.
+	- 12 = nom de l'hôte de la machine.
+	- 60 = Grâce à cet indentifier, on peut fixer une plage d'adresse IP à, par exemple, seulement les ordinateurs DELL.
+	- 55 = dans DHCP DISCOVER
+		- 1 Subnet = masque de sous-réseau.
+		- 3 Router = passerelle par défaut (du routeur dans le même sous-réseau).
+		- 6 Domain Name Server = 
+		- 15 = Nom de domaine
+		- 31 = Perform Router Discover
+		- 33 = Routes statiques
+		- 121 = classless static route
+
+Dans le DHCP Offer, on va répondre aux plus d'options possible, si le serveur ne sait pas il ignore les options concernés.
+
+Comment un serveur DHCP d'un autre VLAN peut connaître notre MAC ? Car on injecte notre adresse MAC dans le paquet de la couche applicative. 
+
+On envoie un paquet DHCP sur le port 68 et on reçoit sur le port 67, habituellement le port est choisi aléatoirement, mais vu qu'on n'a quasi aucune
+connaissance du réseau, on fixe des ports.
+
+LES PAQUETS DHCP: 
+
+	1. DHCP DISCOVER -> on fait l'ensemble des requêtes en broadcast en IPv4, en IPv6 on utilise une adresse multicast qui comporte tous les serveurs DHCP du 
+	network. On retrouve un (normalement) ou plusieurs serveur DHCP. Si l'on en a 5, les 5 font une offre d'adresse. Pour en rendre un plus lent, 
+	DHCP starvation pour surcharger la pool du serveur, ou on le DDOS. On peut faire du spoofing en redirigeant les requêtes vers soi (après un deni de service)
+	On peut protéger son réseau directement à l'accès en sécurisant son switch. (=> Protection au niveau des couches d'accès).
+
+	-	On envoie pour voir s'il y'a un serveur DHCP
+	-	xid : générée par le client aléatoirement
+	-	adresse de dest: BROADCAST 255.255.255.255 car on ne connait pas l'adresse du serveur DHCP
+	-	mon adresse: IPSOURCE: 0.0.0.0 car on a pas d'IP
+	-	adresse MAC: FFFFFF... -> 48 bits , on renseigne son adresse MAC dans la trame et la destination = FFFFFF...
+	-	=> BROADCAST -> router dropN
+
+
+	2. DHCP OFFER -> ici fortinet -> agent de liaison ou firewall (équipement layer 3 -> adresse MAC de liaison locale).
+
+	-	Reçoit un paquet et en renvoit un pour prouver son existence.
+	-	Mécanisme unicast
+	-	Adresse de destination = adresse précédente.
+	-	Cohérence adresse IP, adresse MAC
+	-	Dans le cas de deux serveurs DHCP, redondance (e.g. 500IP, 250 1er , 250 2eme dans une plage différente) ou (500 1 et si le 1 tombe, 500 sur le 2)
+	-	Si pas de DHCP, on peut pas communiquer avec le DNS, si le DNS renseigne les données du DC, on peut pas accéder à internet, on peut rien faire.
+	- 	Même xid
+	-	ciaddr : ip client nulle
+	-	siaddr : ip serveur nulle
+	-	giaddr : ip gateway nulle
+	-	yiaddr : ip proposée par le serveur DHCP
+	-	chaddr : MAC client
+	=> Options: 
+		Option 53 : DHCP Offer
+		Option 01 : Subnet mask
+		Option 03 : Routeur par défaut
+		Option 51 : Durée du bail
+		Option 54 : Adresse du serveur
+
+	3. DHCP REQUEST ->
+
+	-	Mécanisme de broadcast, port src 68 , dest 67, ip de source non connue 0.0.0.0, dest 255.255.255.255.
+	-	Envoie le paquet suite à l'offre pour dire qu'il est d'accord avec le paquet DHCP request et demande la signature du bail.
+
+	4. DHCP ACK/NAK
+
+	-	Réponse pour signer le bail d'IP.
+
+Fortinet = équipement de protection des réseaux -> Source du DHCPOFFER
+
+Si on a des problèmes sur le DHCP à cause de requêtes qui se rapprochent, on peut utiliser wireshark pour analyser le flux.
+Au niveau des switch layer 2 pour le DHCP, on peut définir des ports de confiance et seuls les ports de confiance peuvent communiquer avec le reste du réseau.
+C'est avec ce principe de sécurité qu'on sécurise notre réseau au niveau interne (au niveau des couches d'accès) car la plupart des attaques sont en interne.
+On doit donc faire attention en achetant des switchs aux options de sécurité.
+
+Allocation automatique: Distribuer une adresse IP permanente (temps de location très grand (50 ans e.g.))
+
+Le trafic de broadcast est assez chiant, avec un bail court, on peut avoir du mal avec le réseau à cause des requêtes.
+
+Si on donne une IP proposée par un serveur DHCP alors qu'elle est déjà prise en statique:
+	On peut utiliser le protocole ARP pour savoir si l'on utilise déjà l'adresse ou pas.
+
+Subnet => pool d'adresses IP => Si on a un serveur, on réserve une pool pour les IP fixes, le reste est dans une pool DHCP.
+
+Dans une entreprise, on divise les pools IP par département => comment un pc sait quelle ressource prendre? => la pool est associée à un subnet donc à une interface
+
+subnet divisé en segments, on a plusieurs interfaces du côté du serveur DHCP, une associée à chaque segment, comme ça quand un ordi d'un segment demande une IP à un serveur, 
+le serveur voit qu'il a une adresse associée à ce segment et envoie donc une adresse comprise dans la pool associée. Risque de sécurité
+
+On peut aussi passé sous forme d'interfaces virtuelles: Mise en situation:
+	On a trois VLANS: 14.X 15.X et 16.X , un serveur DHCP qui est relié à un switch L2 connecté aux différents VLANS grâce à un trunk.
+	Grâce à l'encapsulation dot1Q, les paquets seront forwardés dans le switch. Demandes d'IP des clients = broadcast
+
+	On garde les trois vlans et on rajoute un switch L3 (caractéristique = mise en place d'agents relais => permet de faire le relais avec un autre VLAN quand une requête arrive) on met en place un agent relais DHCP
+	On paramètre l'agent en lui fournissant l'IP du serveur DHCP. On a donc le serveur DHCP en 13.1 dans un VLAN 13, le switch écoute en UDP sur le port 67 (DHCP) et dès qu'il va détecter qu'il y'a un DHCP discover effectué par une machine
+	le switch va se dire qu'il y'a un serveur DHCP relié, il va donc pouvoir relayé le paquet.
+	On peut donc désginer une interface virtuelle par interface sur le switch, du coup quand le serveur va relayé le paquet DHCP (unicast) il va envoyé aussi l'IP de l'agent DHCP qui permettra au serveur DHCP de renvoyer une IP dans la pool concernée
+
+	en faisant un DoS et en implémentant son serveur DHCP à la place (si les switch L2 ne sont pas sécurisés => on peut les sécuriser en limitant le nbre de MAC par port(si trop de mac le port se shutdown et envoie une notification)) on peut faire du phishing en donnant une gateway qui est l'adresse de notre machine
+
+	/!\ Agent relai BOOTTP
+
+	On peut mettre un agen relais sur un routeur relié au serveur (MAC2) et à un VLAN (MAC 1) quand on a un DHCP discover, le serveur DHCP renvoie l'IP + la MAC destinée à l'ordinateur
+	Donc si on a un ordinateur qui a une MAC3  et demande une IP le serveur ne liera pas à la MAC3 car il interagit avec l'interface MAC 2 du routeur.
+	Pour celà, on va donc associé l'adresse matérielle du client avec le paquet(niveau couche applicative), comme ça en passant au travers de l'agent relais, le serveur DHCP aura connaissance de la MAC client
+
+
+	Dans le cas où on se reconnecte avec notre ordi à un réseau déjà accédé, on envoie direct un DHCP request car on a en mémoire la dernière adresse, le serveur répond avec un DHCP ack ou NACK
+	Si paquet ICMP vient d'un autre vlan on doit accepter les ICMP echo
+	Pour savoir si l'IP est déjà prise on fait une requête ARP, si on voit que l'IP est prise on envoie un DHCP decline
+
+	Il y'a un timeout sur notre machine (~15sec), si dans ce timeout, le paquet ACK n'a pas été reçu, que va penser l'ordi ?
+		- UDP et IP sont tout deux des best effort, IP = connection less, UDP = connection less
+		On va envoyé 4 paquets, 4 * 15 secondes pour trouver le serveur DHCP
+
+
+	Bail:
+
+	IP -------------------> T1 -------> T1 + T2 / 2 --------> T2
+
+	Quand on arrive au temps T1 (= bail /2)=> renouvellement => le client envoie une demande de renovuellement au serveur DHCP
+	T2 (bail / 87.5 )= temps d'expiration 
+
+	On essaie de renouveler pour T1 + T2 / 2
+	On coupe encore en deux, si à la moitié de ce temps (min 60 secondes), on ne reçoit toujours l'ACK pour renouveller notre IP, on redemande une nouvelle IP.
+	
+	`apt-cache search dhcp`
+
+	deux daemons qui tournent en même temps, un DHCPv4 et un DHCPv6, on a donc un PID qui permet de renseigner l'ID du process pour savoir lequel on doit arrêter
+
+	`ps ax | more` -> permet de retrouver tous les PIDs.
+
+	/var/log/ -> `tail 100 syslog | grep dhclient` => Pour checker les 100 derniers logs, dont ceux qui comportent dhcp client
+
+	`cat /var/lib/dhcp/dhclient.<interface>.leases` => Pour voir les informations véhiculés par le serveur DHCP
+
+	netstat ou route print sous windows pour afficher la table de routage
+
+	Qu'est-ce qu'une route permanente ? route qui reste même après un redémarrage
+
+	00:0c:29:71:17:b6

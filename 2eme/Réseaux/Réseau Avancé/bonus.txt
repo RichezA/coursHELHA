@@ -1,0 +1,21 @@
+MVC au niveau C#:
+
+    Vue <--> Action
+
+    Get -> Contrôleur (Classe)
+    	-> Action (Méthode)
+
+    Première information renseignée = Controleur
+    Information suivante = Action
+
+    Comment savoir qui est le contrôleur, qui est l'action ? Grâce au routage (dont on est maître)
+    http://www.test.be/public/index
+
+    Où public = contrôleur et index = Action
+
+    Pour trouver un article, on peut donc faire
+    http://www.test.be/public/index/xxxx
+    Où public = contrôleur, index = Action, xxxx = UID d'article
+
+    On pourrait donc aussi faire: http://www.test.be/fr/public/index/xxxx
+    Ici on rajoute la langue avant le contrôleur

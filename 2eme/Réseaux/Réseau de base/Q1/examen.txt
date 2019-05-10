@@ -1,0 +1,44 @@
+exam réseau:
+
+	QCM: soit sur ordi, soit papier = 30 minutes
+	pratique: trois routeurs minimum, rip, 1 switch à chaque router, dans un des switchs -> 2 vlans, 1 ou 2 ACL (1 vlan peut accéder, l'autre peut pas) = 1h15-1h20
+
+	Réseau statique:
+		Compléxité augmente avec la taille du réseau
+		Intervention de l'administrateur requise pour modif de topologie
+		Idéal pour les topologies simples
+		Plus sécurisé
+		Aucune ressource en plus nécessaire
+		Route toujours la même
+			Utile pour:
+		Connecter un réseau spécifique
+		Connecter un routeur d'extrémité
+		Récapituler les entrées de la table de routage
+		Créer une route de secours
+		On peut créer une route statique si:
+			Les réseaux de destination sont contigus et peuvent être contenus dans une adresse de réseau
+			Plusieurs routes statiques utilisent toutes la même interface ou IP du tronçon
+		Route statique flottante possible quand pas de de route primare possible
+		Standard: Utile pour les réseaux de proximité
+		Par défaut: Correspond à tous les paquets et envoie vers une passerelle par défaut, utilisée par les routeurs de proxi pour se co au réseau ISP
+			adresse de destination = route statique 0.0.0.0
+		Flottante: Sauvegarde une route existante, distance administrative plus élevée
+		Route statique par défaut 0.0.0.0 0.0.0.0 [5]
+		On ajoute 5 pour une ip flottante
+
+	Routage dynamique:
+		Compléxité indépendant de la taille
+		S'adapte auto aux modifs de topo
+		Idéal pour les topo simples et complexes
+		Moins sécurisé
+		Utilise du processeur, de la mémoire, de la BP
+		Route dépend de la topo
+	ACL:
+		Par défaut un routeur ne filtre pas le trafic, filtrage des paquets analyse les paquets entrants et sortant 
+		On place une acl étendue en entrée au plus près de la source du paquet (le serveur par exemple)
+		On place une acl standard au plus près de la destination en sortie
+		Une acl contient des ace
+	Trunk:
+		Permet de faire communiquer un ou plusieurs vlans à travers deux switchs
+		On a besoin d'une liaison entre les deux, d'autoriser le vlan dans cet interface (switchport trunk allowed vlan xx)
+		Et on change le mode (switchport mode trunk)

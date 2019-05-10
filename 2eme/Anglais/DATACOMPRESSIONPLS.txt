@@ -1,0 +1,16 @@
+Data compression in cloud computing:
+
+This is a useful technique that helps reducing the data but still storing
+the same amount of data in fewer bits resulting in a reduction of the data
+storage space, resource usage or transmission capacity.
+
+There's two types of data compression:
+
+Lossless (mainly used for multimedia): The compression reduces bits by 
+identifying and eliminating stastistical redundancy. There's no lose of 
+information.
+
+Lossy: This compression system reduces bits by removing unnecessary or less 
+important information.
+
+It is also called, in the context of data transmission as source coding.

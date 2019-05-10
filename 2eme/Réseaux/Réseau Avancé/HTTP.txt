@@ -1,0 +1,121 @@
+Le protocole HTTP/SSL
+
+Savoir: protocole de la couche transport -> TCP (sur le port 80 pour HTTP et 443 pour HTTPS).
+
+C'est un protocole client-serveur
+
+Fiddler = débugueur web gratuit par telerik
+
+Si l'on a une connexion https entre un client et un serveur, une machine utilisant fiddler ne pourra pas accéder aux informations (paquets protégés).
+
+Host nous permet de travailler avec la gestion de sites virtuels.
+
+Les codes:
+200 OK
+404 Page not found
+500 Internal Server Error
+302 Redirection URL
+
+À l'examen: Dire ce que veut dire un attribut, citer la gestion de cache par rapport à un en-tête http
+
+La norme 1.0 permet la gestion des sites virtuels, la gestion de cache et l'authentification
+1.1 permet la gestion des transferts en mode pipeline et la gestion des langues.
+
+Transfert pipeline:
+    - Dans les versions antérieures, il n'y avait qu'un seul canal de communication entre le client et le serveur. Il fallait donc charger toutes les ressources
+    l'une après l'autre pour avoir le DOM dans son entiereté.
+    - Maintenant, tout se fait en paralèlle, il est donc plus facile pour charger le DOM dans son entiereté plus rapidement et ainsi permettre une meilleure gestion 
+    de la page.
+Entêtes:
+    Contient trois méthodes d'envoi:
+    - GET: récupère une ressource
+    - HEAD: récupère l'entête de la ressource
+    - POST: envoie de données à la ressource lié par URL.
+
+    Le CRUD:
+    - C = Post
+    - R = Get
+    - U = Update
+    - D = Delete
+
+    Au début head = page valide pour xxx secondes
+Zone d'entête:
+    - host : seul champ obligatoire dans la norme HTTP/1.1, nécessaire dans la gestion des serveurs WEB virtuels. C'est l'information qui précise le site que l'on désire atteindre.
+    - date : Date et heure du client (peut être utile pour les formulaires postés).
+    - From : e-mail du user qui contrôle le client (non utilisé)
+    - Referer: URI de la ressource à l'origine de la requête
+    - User-Agent: identifie le client - utile pour adapter les documents renvoyés en fonction du client ou de sa version
+    - Accept: Idientifie le type de document accepté par le client
+    - Accept-Charset: jeu de chars accepté par le client
+    - Accept-Encoding: Codage accepté par le client
+    - Cookie: Client fournit un cookie au serveur. Valeur = nom et valeur du cookie, les deux séparés par un "=".
+Aussi contenu dans l'entêe d'une réponse  
+    - Content-Type: identifie le type de doc échangé: text/plain, text/html, image/gif, application/x-www-form-urlencoded (utile quand on post)
+    - Content-Length: nombre d'octets d'informations (associé au post)
+    - Content-Encoding: indique le mode d'encodage
+    - Content-Language: langage utilisé dans le corps de la requête
+	- Expires: date limite de validité
+	- Forwarded: utilisé par les machines intermédiaires entre le browser et le serveur
+	- Location: redirection vers une nouvelle URL
+	- Server: caractéristiques du serveur ayant envoyé la réponse
+	- WWW-Authenticate: demande d'authentification
+	- Last-Modified: date et heure de dernière modification de la ressource
+	- Set-Cookie: permet au serveur de déposer un cookie chez le client.
+
+HTPP 1.0 - Gestion de la cache.
+	
+	L'objectif de la cache est d'accélerer le temps de réponse d'une requête soumise par un client à un serveur Web (limite aussi l'encombrement d'un réseau ou la surcharge d'un serveur). Les caches sont du côté client, sur le serveur mais aussi tout équipement intermédiaire tel que, par exemple, un proxy web.
+
+	Plusieurs mécanismes pour gérer la validité de la cache:
+	- HEAD permet de récupérer seulement l'entête, notamment les champs Last-Modified et Content-Length. Si le contenu n'est plus valide, on GET vers le serveur pour récupérer tout le contenu.
+	- GET avec le champ "If-Modified-Since". Si la ressource a été modifiée, le serveur répond comme un GET normal. Si pas, le serveur renvoie un code 304- Not Modified.
+	- Le champ "Expires". Si la donnée ne doit pas être cachée, il suffira de faire en sorte que le champ "Expires" contienne une date inférieure ou égale au champ Date.
+
+
+    Cette méthode indexe juste l'url v:
+
+    http://www.test.be -> Comment get un article ?
+	http://www.test.be/index.php?artid=xxx
+	Comment get la page dans une langue ? http://www.test.be/index.php?lang=fr
+    																  ?lang=en_UK
+   	On doit trouver un moyen d'indexer les arguments
+
+Dans une société, plusieurs personnes peuvent accéder à un ordinateur => si toutes les données sont réservées à l'entreprise et non confidentielle -> OK
+
+Si pas, cela peut engendrer des soucis, remède ? Invalider la cache des navigateurs
+
+La cache -> problème de sécurité / de rafraichissement
+		 -> c'est très rapide d'aller reprendre une page dans la cache
+L'accès à la cache d'un navigateur est lié à l'URL utilisé pour accéder à la page (on s'en fout des arguments associés à l'URL, la cache ne les stocke pas)
+
+Avant on avait le client, le client envoyait une requête HTTP au serveur en renseignant le HEAD, GET, HOST. Le serveur renvoyait juste du HTML
+Maintenant, le client renseigne un controleur ainsi que l'action étant associée
+
+La cache a plusieurs niveaux:
+	Serveur: On peut gérer la cache côté serveur mais peut aussi être géré au niveau de tous les intermédiaires.
+	- Proxy   
+	- Client: Permet de rendre le serveur plus réactif (lors de petites connexions par exemple).
+
+- Quand on envoie une requête HEAD vers un serveur, on ne demande en fait que l'entête de l'adresse, on va donc comparer si notre version est identique à celle du serveur,si elles sont identiques, on prend la page dans notre cache, si pas on fait une requête GET au serveur.
+HEAD peut récupérer des champs tel que 'Last-modified' et 'Content-Length'.
+
+- On peut envoyer une requête GET avec le champ 'If-Modified-Since'. Si la ressource a été modifiée, le serveur répond à la requête comme un GET normal. Si pas on a une erreur 304 -> Not modified
+
+- Expires
+
+4. HTTP 1.1
+
+Inclut une gestion partielle au niveau de la cache.
+On peut ajouter un champ Cache-Control qui spécifie comment on doit gérer la cache:
+Comme public, private, no-cache, max-age,etc.
+
+HTTP 1.1 propose aussi un UID qui sera modifié chaque fois que la page aura été modifiée ( par exemple incrémenté ou généré sur base d'un fingerprint MD5).
+Cet UID sera ajouté dans l'entête en utilisant un champ ETag lors de l'envoi du document par le serveur.
+Le client peut envoyé une requête GET en intégrant l'UID dans l'entête du document qui est déjà stocké dans la cache.
+
+5. Les codes de réponses
+
+Les codes 20X -> réussite
+Les codes 30X -> redirection
+Les codes 40X -> erreur côté client
+Les codes 50X -> erreur côté serveur

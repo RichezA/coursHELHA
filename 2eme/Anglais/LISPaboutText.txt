@@ -1,0 +1,58 @@
+Artificial intelligence
+
+Used in many different sectors: from voicemails to NPG in video games.
+
+Nowadays, Artificial intelligence is based on machine learning to create a new feel of realism, such as the new AC where
+your choices affect the game experience. We're now far from the old AI where it was just a character repeating the same
+sentence again and again.
+
+Usually made by an old set of functional, procedural and reflective programming languages called lisp created in 1958. Its 
+dynamic & strong typing permits a lot of freedom during the making of the artificial intelligence
+
+As a final word : Learn a LISP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

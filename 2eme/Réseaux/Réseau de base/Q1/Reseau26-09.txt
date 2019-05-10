@@ -1,0 +1,76 @@
+-- Managable facilement & se rendre indispensable
+VLAN = Virtual LAN -> Sur un même réseau physique, on peut faire deux réseaux virtuels (couche 2)
+
+    Il faut que le switch soit configurable 
+
+                192.168.64.138
+    VLAN 1 192.168.1.0    VLAN 2 192.168.1.16
+
+Quand on a un projet en réseau (60 postes)
+    - Définir le role du poste : media, accès
+    - Définir serveur, partage,etc...
+
+3 Administration } VLAN
+25 Dev          }       Même VLAN
+2 Chief Dev     }
+
+20 Help Desk } VLAN
+
+5 Sales } VLAN
+5 Public } VLAN
+
+3 Servers } VLAN
+
+S1
+1 VLAN Administration       VLAN 40
+1 VLAN Dev & Chief Dev      VLAN 10
+1 VLAN HD                   VLAN 20
+1 VLAN Sales                VLAN 30
+1 VLAN Public               VLAN 90
+1 VLAN AdminSys             VLAN  7
+
+2 types de switches :
+    Switch classique : si on veut l'étendre , on doit utiliser un autre switch (on perd un port)
+    Switch stackable    
+    Chassis avec lames où on rack des cartes switch
+
+PuTTY
+    Choisir Serial
+    Choisir le COM (Gestionnaire de périphériques => Ports COM)
+
+Commands (fichier config à sauvegarder en cas de défaillance de switch)
+enable
+configure terminal
+hostname FrancoisTheTounchiSwitch
+banner motd #Authorized access only#
+! This is a comment
+! Choisir vlan de 10 en 10
+vlan 10
+name Dev
+exit
+vlan 20
+name HelpDesk
+exit
+vlan 30
+name Sales
+exit
+vlan 40
+name Administration
+exit
+vlan 90
+name Public
+exit
+vlan 7
+name AdminSys
+exit
+do show vlan
+interface FastEthernet 0/1
+switchport access vlan 10
+no shutdown
+exit
+interface range FastEthernet 0/2-7
+switchport access vlan 20
+no shutdown
+exit
+
+3 VLAN 10,15,20 machines

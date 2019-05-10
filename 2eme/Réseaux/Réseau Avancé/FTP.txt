@@ -1,0 +1,24 @@
+FTP
+
+Utilise le port 21 en TCP
+Le serveur est passif, la demande de connexion est faite par le client, le serveur renseigne juste le port de connexion
+
+	   PASV
+client ---> Serveur 21
+
+client <--- ex 10,11,,17,19,144
+
+client ---> serveur 500f
+
+	   <--> 
+	   DATA
+
+
+ACTIF/PASSIF
+				   ACTIF
+hostA: 10.11.1.106 ----> hostB: 10.11.0.17
+				   PORT?
+
+				   PASV>
+				   <---- 
+				   PORT!
