@@ -119,3 +119,28 @@ Les codes 20X -> réussite
 Les codes 30X -> redirection
 Les codes 40X -> erreur côté client
 Les codes 50X -> erreur côté serveur
+
+
+Pour protéger son serveur web:
+
+ - Interdire l'exécution de script en ligne.
+
+ <div id="mondiv" onclick="mafonction()"> => la fonction est vue par le browser comme script en ligne.
+
+ <head>
+ 	$("#mondiv").query("click", function() {   => Comme ça on peut exécuter le script de façon dynamique.
+
+ 	});
+ </head>
+
+
+"ps" => liste tous les processus tournant
+"ps -aux | grep apache2" => voir les services apache2
+Dossier "/var"  => variables
+Dossier "/bin"  => binaries => exec
+Dossier "/home" => home directories
+
+Fichier "shadow" sous Linux contient tous les mots de passe des utilisateurs => encryptés => moyen de brute force
+
+
+Hardening devices = protection des appareils physiques
