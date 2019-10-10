@@ -61,7 +61,7 @@ iface ens34 inet static
 - Dans le fichier fstab (pour File System tab) (dans /etc/), on peut voir tous les points de montages, on peut aussi voir que chaque point de montage à un identifiant unique.
 Pour éviter la casse (il est possible de ne plus du tout accèder au dossier racine) on peut faire : "cp /etc/fstab /etc/fstab.org"
 
-- Dans le dossier /dev/, on peut trouver des fichiers nommés `sdX` 
+- Dans le dossier /dev/, on peut trouver les différents points de montage du système qui correspondent à une interface physique. 
 
 - Les fichiers cachés ont leur nom qui commence par un point.
 
@@ -95,6 +95,7 @@ Pour éviter la casse (il est possible de ne plus du tout accèder au dossier ra
 - _find / -name iptables_ Permet de trouver le chemin, ici, à partir du sommet de l'arborescence jusqu'à iptables. 
 - _ip link set up <interface>_ Permet, ici, de connecter la couche de liaison liée à l'interface.
 - _apt-get [install/remove/purge/...] <package>_ Permet d'installer, de modifier, de supprimer un package. _remove_ et _purge_ suppriment tout deux un package mais la commande _purge_ enlève aussi les fichiers de configuration associé au package.
+- _grep_ Permet de rechercher un pattern à l'intérieur d'un fichier
 
 
 Si on est connecté comme root, les dossiers personnels sont dans le dossier `/root`.
@@ -128,3 +129,33 @@ Nous avons par exemple les propriétés:
 - MaxAuthTries <int> : Permet de configurer un nombre d'essais d'authentification de base.
 - MaxSessions <int> : Permet de configurer un nombre de sessions simultanées par défaut.
 - LoginGraceTime 2m : Permet de configurer un temps maximal pour se connecter à un utilisateur.
+
+## Créer une partition
+
+Comme dit plus haut, on peut trouver les points de montage dans le dossier `/dev/` la structure d'un disque est comme celle-là:
+S
+D
+X : Lettre (a,b,...) désignant le numéro du disque physique
+<Number> : Numéro de partition
+
+Il n'y a pas de nombre pour un disque non partitionné.
+On va donc le partition et ensuite le formater dans le système de fichier journalisé ext4 puis monter la partition pour pouvoir utiliser l'espace de stockage.
+
+On utilisera l'utilitaire fdisk pour le partitioner `/usr/sbin/fdisk /dev/sdb`, on peut créer une nouvelle partition avec la touche `n` on suit ensuite les consignes données et on peut par après sauvegarder nos changements avec la touche `w`.
+
+On peut ensuite le formater en ext4 avec la commande `/usr/sbin/mkfs.ext4 /dev/sdb1`.
+
+Pour la monter, on peut faire `mount -t ext4 /dev/sd1 <dir>` : Dir est le dossier à partir duquel on pourra accèder à notre partition.
+Si l'on veut enlever le montage, on peut utiliser la commande `umount <dir>`.
+
+## Les principaux dossiers Linux
+
+/dev -> devices.
+/home -> fichiers des utilisateurs.
+/var -> fichiers temporaires ou qui vont changer au fil du temps.
+/root -> fichiers du super utilisateur?
+/bin & /sbin -> binaire -> exécutables (soit du système d'exploitation ou alors des commandes externes utilisables par les utilisateurs).
+/media -> répertoire contenant des points de montage pour des cd.
+
+
+# Pour la prochaine fois -> RAID 
