@@ -1,0 +1,8 @@
+LT = Level Transmitter
+LIC = Level Indicator Controller
+FCV = Flow Controlled Valve
+
+SP = Set Point => réglage / consigne = 50%
+PV = Process Value => mesure / niveau à un temps T
+Epsilon = Ecart de régulation = SP - PV
+MV(out) = Manipulating Value => Grandeur réglante = ordre de débit de remplissage que la sortie du régulateur donne à la vanne (FCV)

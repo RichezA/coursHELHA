@@ -88,6 +88,7 @@ Pour éviter la casse (il est possible de ne plus du tout accèder au dossier ra
     - Grâce à cette commande, on peut voir les droits en lecture / écriture sur les différents dossiers / fichiers du répertoire visé. 
     - exemple:
         - -rwx--r--r-- root root : Le super utilisateur `root` à les droits en lecture/écriture, le groupe utilisateur `root` à les droits en lecture. Les autres utilisateurs ont le droit de lecture.
+    - param _[-li]_ -> Pour afficher le numéro d'iNode.
 - _pwd_ -> print working directory.
 - _cp_ -> Copy, permet de copier un fichier ou alors d'effectuer une sauvegarde, exemple: `cp interfaces interfaces.org`. interfaces.org contient donc le backup de notre fichier interfaces.
 - _shutdown -h now_ : Eteint le serveur.
