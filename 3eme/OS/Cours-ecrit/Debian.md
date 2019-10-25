@@ -96,8 +96,17 @@ Pour éviter la casse (il est possible de ne plus du tout accèder au dossier ra
 - _find / -name iptables_ Permet de trouver le chemin, ici, à partir du sommet de l'arborescence jusqu'à iptables. 
 - _ip link set up <interface>_ Permet, ici, de connecter la couche de liaison liée à l'interface.
 - _apt-get [install/remove/purge/...] <package>_ Permet d'installer, de modifier, de supprimer un package. _remove_ et _purge_ suppriment tout deux un package mais la commande _purge_ enlève aussi les fichiers de configuration associé au package.
-- _grep_ Permet de rechercher un pattern à l'intérieur d'un fichier
-
+- _grep_ Permet de rechercher un pattern à l'intérieur d'un fichier.
+- _cmp_ On peut comparer deux fichiers bytes par bytes
+- _diff_ On peut comparer deux fichiers lignes par lignes
+- _| more_ permet d'injecter la sortie standard dans l'entrée de la première commande, more permet de voir les informations mais de limiter la hauteur à la hauteur de notre résolution d'écran.
+- _head [-n <int>]_ retourne le début d'un fichier
+- _tail_ retourne les dix dernières lignes d'un fichier
+- _wc [-l] <file>_ retourne le nombre de lignes, mots et bytes pour chaque fichier
+- _who_ Affiche les users connectés au temps t
+- _w_ Affiche les users connectés et ce qu'ils font (utile ;) )
+- _id [user]_ Affiche les identifiants d'utilisateur et de groupe effectifs et réels
+- _<cmd> [2]>[>] <file>_ envoie le résultat de la commande dans le fichiers, un simple `>` overwrite le fichier, tandis qu'un double va l'ajouter au fichier, le `2>[>]` est utilisé pour seulement renvoyer les erreurs
 
 Si on est connecté comme root, les dossiers personnels sont dans le dossier `/root`.
 
@@ -158,5 +167,69 @@ Si l'on veut enlever le montage, on peut utiliser la commande `umount <dir>`.
 /bin & /sbin -> binaire -> exécutables (soit du système d'exploitation ou alors des commandes externes utilisables par les utilisateurs).
 /media -> répertoire contenant des points de montage pour des cd.
 
+## Les fichiers Linux
+- passwd dans /etc/ -> contient tous les utilisateurs du système
+```
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:darmon:/usr/sbin:/usr/sbin/nologin
+...
+<user>:x:1000:1000:<usergroup>,,,:/home/<user>:/bin/bash
+```
+On retrouve:
+    - Le nom d'utilisateur
+    - Un x qui correspondait, avant, au stockage du mot de passe
+    - un UID pour l'utilisateur
+    - un UID pour le groupe d'utilisateur
+    - le groupe d'utilisateur
+    - le répertoire
+    - la faculté de login ou non
+
+- group dans /etc/ -> contient des informations sur les groupes d'utilisateurs du système
+
+- shadow -> stocke les mots de passe hashés des utilisateurs
 
 # Pour la prochaine fois -> RAID 
+
+## Changer les droits d'un fichier
+
+On utilise la commande `chmod` rwx|rwx|rwx
+                               421|421|421 -> octal
+Pour mettre un fichier en RW pour soi et r pour le groupe SEULEMENT, on utilisera la commande: `chmod 640 <nomdefichier>.ext`
+
+On peut créer un script basique : 
+```sh
+#!/bin/sh
+echo "toto"
+```
+Si l'on demande à exécuter le fichier, la permission nous sera, par défaut, refusée, on pourra donc ajouter une permission rwx (read/write/exec) pour soi et r pour le groupe SEULEMENT
+`chmod 740 <nomduscript>.sh`
+
+On peut aussi éditer les permissions en mode symbolique: 
+`ugoa [-+=] <perms>`
+ - u : user
+ - g: group
+ - o: other
+ - a: all
+ - <perms> : r | w | x
+
+## Changer le mot de passe
+
+Nous pouvons changer le mot de passe pour un utilisateur avec la commande `passwd`
+
+En regardant les permissions du fichier `passwd` on peut voir : `-rwsr-xr-x 1 root root` -> on peut voir que tout le monde peut exécuter le fichier mais c'est root qui a accès au flag `s` qui est le SetUID, ce flag permet l'exécution d'un programme en tant qu'administrateur même en étant logger sur un utilisateurlambda.
+
+
+## Infiltrer une machine 
+
+Si une machine est ouverte on peut faire > 
+```sh
+cp /usr/bin/bash /home/<user>/bash
+cd /home/<user>/
+chmod u+s bash
+```
+On pourra accéder à des fichiers root en faisant `/home/<user>/bash -p`
+Dès lors, on pourra faire:
+```sh
+cd /root
+cat données_sensibles.txt
+```

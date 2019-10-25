@@ -1,0 +1,16 @@
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\FizzBuzzTests.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\FizzBuzzTests.pdb
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\FizzBuzz.exe
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\FizzBuzz.pdb
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\FizzBuzz.exe.config
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\obj\Debug\FizzBuzzTests.csprojAssemblyReference.cache
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\obj\Debug\FizzBuzzTests.csproj.CopyComplete
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\obj\Debug\FizzBuzzTests.dll
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzzTests\obj\Debug\FizzBuzzTests.pdb

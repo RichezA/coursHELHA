@@ -1,0 +1,6 @@
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\bin\Debug\Calculatrice.exe.config
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\bin\Debug\Calculatrice.exe
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\bin\Debug\Calculatrice.pdb
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\obj\Debug\Calculatrice.csprojAssemblyReference.cache
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\obj\Debug\Calculatrice.exe
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\Calculatrice\obj\Debug\Calculatrice.pdb

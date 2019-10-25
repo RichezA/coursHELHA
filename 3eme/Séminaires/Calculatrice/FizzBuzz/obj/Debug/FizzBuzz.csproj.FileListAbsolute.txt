@@ -1,0 +1,6 @@
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\bin\Debug\FizzBuzz.exe.config
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\bin\Debug\FizzBuzz.exe
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\bin\Debug\FizzBuzz.pdb
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\obj\Debug\FizzBuzz.csprojAssemblyReference.cache
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\obj\Debug\FizzBuzz.exe
+C:\Users\riche\Documents\coursHELHA\3eme\Séminaires\Calculatrice\FizzBuzz\obj\Debug\FizzBuzz.pdb
