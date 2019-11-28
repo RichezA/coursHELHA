@@ -316,13 +316,17 @@ RAIDX0 => Un raid X combiné dans un RAID0
 - A ce point le groupe comptable ne peut pas écrire dans le fichier
 - `chmod g+w <fichier>`
 
-## Commandes TOP
+## Commandes liées aux ressources
 - Gestion des resources
 - `ps aux` : Permet un standard d'affichage
-- `ps -ef` : Permet de montrer les PIDS et référence: 
+- `ps -ef` : Permet de montrer les PIDS et PPID (Parent Process Identifier): 
 
 ![ps-ef example](./imgs/ps-ef.png)
 
-Une ligne : `<group> <PID> <reference> 0 <time> <command>`
+Une ligne : `<group> <PID> <PPID> 0 <time> <command>`
 e.g.: `root 876 817 0 <time> sleep 2`
       `wilfart 817 651 0 <time> -bash`
+
+- `pstree <user>`: Liste des processus sous forme d'arbre (possibilité de tirer sur un utilisateur).
+
+- rcX.d : runlevel, ils sont utilisés au démarrage par init.d pour démarrrer les bons services.
