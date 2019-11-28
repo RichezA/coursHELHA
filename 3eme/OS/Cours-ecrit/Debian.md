@@ -188,7 +188,6 @@ On retrouve:
 
 - shadow -> stocke les mots de passe hashés des utilisateurs
 
-# Pour la prochaine fois -> RAID 
 
 ## Changer les droits d'un fichier
 
@@ -233,3 +232,96 @@ Dès lors, on pourra faire:
 cd /root
 cat données_sensibles.txt
 ```
+
+
+## RAID
+
+RAID0 (stripping) => 2 disques mini. Les disques fonctionnent en parallèle
+RAID1 (mirroring) => 2 disques mini. Un des disques est une copie de l'autre
+RAID5 => 3 disques mini. 1 disque de défectueux
+RAID6 => 4 disques mini. 2 disques défectueux
+RAIDX0 => Un raid X combiné dans un RAID0
+
+- `apt-cache search mdadm`
+- `apt-get install mdadm`
+- On doit config les disques et créer une partition avec un nombre de blocs identiques sur chacun des disques. Pour une partition < que 2To -> fdisk sinon gdisk
+- Création de la grappe: 
+    - /dev/mdX : correspond au nom de la grappe
+    - --level=Y: indique le RAID Y souhaité
+    - --raid-devices=Z: le nombre de disques
+    - Le nom des disques
+- `./mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdc1 /dev/sdd1`
+- On peut visualiser l'état de création avec `cat /proc/mdstat`
+- Infos sur le disque virtuel créé :
+    - `./mdadm --detail /dev/md0`
+    - `./fdisk -l`
+- Formater le disque virtuel:
+    - `./mkfs.ext4 /dev/md0`
+- Monter le disque virtuel:
+    - `mkdir /MonRaid`
+    - `mount /dev/md0 /MonRaid/`
+- Etendre un RAID:
+    - `./mdadm --manage /dev/md0 --add /dev/sde1`
+    - A ce moment-là, le disque est pris comme disque de spare
+- Ajouter le stockage de spare au RAID:
+    - `./mdadm --grow /dev/md0 --raid-devices=4`
+    - `./mdadm --detail /dev/md0`
+    - `./resize2fs /dev/md0`
+
+### Mdadm et défaillance d'un disque
+- La tolérance dépend du type de RAID (aucune pour 0, un disque pour 5, deux pour 6)
+- Pour prévenir les défaillances il est préférable de détecter des erreurs de disque au plus bas niveau en utilisant les données SMART. 
+- Si SMART nous indique un problème sur le disque sdc: 
+    - Déclarer le disque défectueux dans la grappe.
+    - Supprimer le disque défectueux de la grappe.
+    - Remplacer le disque défectueux.
+
+- Le marquer comme défectueux:
+    - `./mdadm --manage /dev/md0 --set-faulty /dev/sdc1`
+- Le supprimer:
+    - `./mdadm --manage /dev/md0 --remove /dev/sc1`
+- Le remplacer:
+    - `./mdadm --manage /dev/md0 --add /dev/sdc1`
+
+### Sauvegarde configuration MDADM
+- `./madadm --examine --scan --verbose`
+- `cp /etc/mdadm/mdadm.conf /etc/mdadm/mdadm.conf.old`
+- `./mdadm --examine --scan --verbose >> /etc/mdadm/mdadm/conf`
+- `./update-initramfs -u -k all`
+
+### MDADM et le monitoring
+- On peut éditer le fichier mdadm.conf et modifier la ligne:
+    - `MAILADDR root` en remplaçant root par notre adresse mail.
+    - L'envoi d'un mail nécessite un agent relai smtp installé sur l'environnement Linux
+
+## Création d'un utilisateur
+- Utilisation de la commande `adduser` -> crée l'utilisateur toto, le groupe primaire auquel il appartient (toto), le répertoire du user dans /home/ et /bin/bash
+
+## Changer le propriétaire d'un fichier
+- Utilisation de la commande `chown` -> change les droits de possession d'un fichier 
+    -> `chown toto:toto ./msg.txt`
+- Utilisation de la commande `chgrp` -> change le groupe propriétaire d'un fichier / dossier
+
+## Création d'un groupe
+- Utilisation de la commande `groupadd`
+- `groupadd Comptable`
+
+## Modifier un compte utilisateur
+- Utilisation de la commande `usermod`
+- `usermod -a -G Comptable toto`
+
+## Changer les droits d'un groupe
+- `chmod 750 <fichier>` pour enlever les droits d'accès aux restes des utilisateurs, RAPPEL: 7 pour RWX pour le propriétaire, 5 pour RX pour le groupe, 0 pour rien pour les autres
+- `chown :Comptable <fichier>`
+- A ce point le groupe comptable ne peut pas écrire dans le fichier
+- `chmod g+w <fichier>`
+
+## Commandes TOP
+- Gestion des resources
+- `ps aux` : Permet un standard d'affichage
+- `ps -ef` : Permet de montrer les PIDS et référence: 
+![ps-ef example] (./imgs/ps-ef.png)
+
+Une ligne : `<group> <PID> <reference> 0 <time> <command>`
+e.g.: `root 876 817 0 <time> sleep 2`
+      `wilfart 817 651 0 <time> -bash`
