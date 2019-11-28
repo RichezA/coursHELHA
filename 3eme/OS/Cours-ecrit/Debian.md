@@ -320,7 +320,8 @@ RAIDX0 => Un raid X combiné dans un RAID0
 - Gestion des resources
 - `ps aux` : Permet un standard d'affichage
 - `ps -ef` : Permet de montrer les PIDS et référence: 
-![ps-ef example] (./imgs/ps-ef.png)
+
+![ps-ef example](./imgs/ps-ef.png)
 
 Une ligne : `<group> <PID> <reference> 0 <time> <command>`
 e.g.: `root 876 817 0 <time> sleep 2`
