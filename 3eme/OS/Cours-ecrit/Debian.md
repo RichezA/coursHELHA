@@ -316,7 +316,7 @@ RAIDX0 => Un raid X combiné dans un RAID0
 - A ce point le groupe comptable ne peut pas écrire dans le fichier
 - `chmod g+w <fichier>`
 
-## Commandes liées aux ressources
+## Commandes liées aux ressources : Processus
 - Gestion des resources
 - `ps aux` : Permet un standard d'affichage
 - `ps -ef` : Permet de montrer les PIDS et PPID (Parent Process Identifier): 
@@ -330,3 +330,61 @@ e.g.: `root 876 817 0 <time> sleep 2`
 - `pstree <user>`: Liste des processus sous forme d'arbre (possibilité de tirer sur un utilisateur).
 
 - rcX.d : runlevel, ils sont utilisés au démarrage par init.d pour démarrrer les bons services.
+
+- `systemctl list-unit-files [| grep enabled]` : retrouve tous les services existant [seulement ceux qui sont activés]
+- `systemctl kill <service>` : Envoie un signal d'arrêt (SIGTERM) au processus
+
+## Créer un service
+
+- Créer un fichier <nom-du-service>.service dans `/etc/systemd/system/`
+- Contenu:
+```
+[Unit]
+Description=Mon service 
+After=tlp-init.service
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/local/bin/<nom-de-service>.sh
+[Install]
+WamtedBy=multi-user.target
+```
+
+- `systemctl get-default` : Get le niveau de démarrage par défaut
+- `systemctl set-default multi-user.target` : Set le niveau de démarrage
+
+- Créer un dossier dans `/usr/lib/` 
+- Copier le script dedans
+
+## Arrêter un service (bruteforce)
+- `kill -KILL <PID>`
+
+Options de Kill:
+- HUP
+- INT  : 
+- KILL : kill
+- STOP : stop
+- CONT : continue
+
+## Arrêter un service (manière douce)
+- `Ctrl+C` : Le kill
+- `Ctrl+Z` : Le stoppe et le met en tâche de fond
+
+
+## Jobs
+- `jobs` : permet de voir les scripts qui ont étés stoppés
+- Pour reprendre un job, on peut faire: `fg %<index>` en foreground ou `bg %<index>` en background
+
+`find / -name toto > "test.txt" 2>&1 1` : affiche tout (erreurs,etc)
+
+## Allouer des ressources
+
+- Il existe une commande `nice` permettant de fixer les privilèges pour une commande.
+- `nice [option] [command arg ...]` 
+- Il existe une option `n` permettant de fixer le niveau de privilège (entre -20 et 19)
+
+- On peut voir le niveau de privilège avec la commande `ps -l`
+
+- Avec la commande `renice 10 -p <PID>` : donne une nouvelle priorité à un PID
+
+- On peut démarrer un script avec une certaine priorité `nice -n <prio> [commande]`
