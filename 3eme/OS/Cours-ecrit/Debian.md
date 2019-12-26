@@ -1,3 +1,40 @@
+# Examen
+- se connecter en ssh sur la bécane du monsieur
+- créer un user avec le matricule comme userid. Mdp pareil
+- changer les droits d'accès son répertoire de travail de sorte qu'on soit le seul qui y ait accès. (change owner)
+- Une fois l'utilisateur créé on se déco du root et on se reco avec son propre compte
+- Après s'être authentifié, afficher répertoire courant (pwd)
+- Utiliser la commande permettant d'authentifier l'interface réseau de notre environnement (ip a)
+- imaginons que l'interface soit configurée en dhcp comment modifier (aller dans network/interfaces)
+- Si on a les droits root, comment faire la màj (apt-get update, apt-get upgrade)
+- Ou se situe la liste des serveurs de distribution (/etc/apt/list)
+- Créer dans le répertoire de travail un dossier BackupConf dans lequel on copie sous forme de liens durs tous les fichiers ayant l'extension conf présents dans le dossier etc
+- Créer un groupe nommé Admin et on change l'appartenance des fichiers copiés de sorte que ce groupe soit propriétaire des copies
+- Vous modifiez les droits de sorte que le groupe ait uniquement un accès en lecture (chmod)
+- En supposant que User1 et User2 existent, faites en sorte que ces deux utilisateurs appartiennent à Admin
+- Vérifier la liste des utilisateurs auant entre autres comme groupe secondaire Admin
+- Créer une archive compressée avec les ficiers pointés par vos liens durs obtenus au point b
+- Vous avez ajouté un nouveau disque dur dans votre système. Il est identifié par l'entrée sde dans le dossier /Dev
+	créer une partition primaire et la formater en ext4
+	Comment allez vous pratiquer pour monter la partition avec comme point de montage un dossier (mount)
+	Comment automatiser le montage lors de l'amorçage de votre serveur?
+- Votre système de fichiers comprend un dossier /Backup
+	
+
+- sachant qu'un script en tache de fond ne peut interagir avec stdin et stdout, comment régler le problème(on redirige stdout et pas de stdin en tache de fond)
+- Une fois la commande exécutée en tache de fond, voir l'arborescence des processus amenant au script (ps -aux)
+- Comment pouvez vous vérifier la priorité de votre processus en cours d'exécution, utilité de ces priorités ?
+- Lister les process en cours d'exécution, une des commandes dispo fournit une colonne correspondant à l'état de chaque process et comprenant notamment les abréviations RSDZ et TA et à quoi- correspondent les états
+- comment mettre fin à une tâche(kill avec le process ID)
+- Comment pouvez vous obtenir en temps réel les stats d'utilisation, en termes de ressources, de l'ensemble des différents process ? (top)
+		
+
+- en utilisant la commande id c'éer un script permettant de déterminer si le nom d'un utilisateur passé en paramètre existe pi âs en ayant accès 
+à l'écran d'affichage : L'utilisateur existe ou pas Si aucun paramètre n'est passé le script doit afficher la syntaxe de sa propre utilisation
+- Modifier le script de sort que si l'utilisateur existe, indiquer s'il est actuellement connecté ou pas.
+
+
+# Cours
 ## Paramétrages Linux
 
 - On utilise toujours un compte à accès restreint et ensuite on exécute les commandes en mode superutilisateur. De cette façon, si l'on trouve le mot de passe de notre utilisateur, le "hacker" n'a aucun accès au superutilisateur.
@@ -106,6 +143,7 @@ Pour éviter la casse (il est possible de ne plus du tout accèder au dossier ra
 - _who_ Affiche les users connectés au temps t
 - _w_ Affiche les users connectés et ce qu'ils font (utile ;) )
 - _id [user]_ Affiche les identifiants d'utilisateur et de groupe effectifs et réels
+- _ln [Options] <fichier_source> <fichier_destinations>_ Crée un lien dur / symbolique (option = -s pour symbolique)
 - _<cmd> [2]>[>] <file>_ envoie le résultat de la commande dans le fichiers, un simple `>` overwrite le fichier, tandis qu'un double va l'ajouter au fichier, le `2>[>]` est utilisé pour seulement renvoyer les erreurs
 
 Si on est connecté comme root, les dossiers personnels sont dans le dossier `/root`.
@@ -388,3 +426,162 @@ Options de Kill:
 - Avec la commande `renice 10 -p <PID>` : donne une nouvelle priorité à un PID
 
 - On peut démarrer un script avec une certaine priorité `nice -n <prio> [commande]`
+
+# BASH
+
+## Variables d'environnement
+- PATH : Liste des répertoires dans lesquels le CMD doit chercher les fichiers exécutables.
+- SHELL : Nom de l'interpréteur de commande utilisé
+- HOME : Contient le chemin absolu du répertoire racine de l'utilisateur.
+- USER : Contient le nom d'utilisateur
+- DISPLAY : Indique sur quel écran s'ouvrent les fenêtres.
+
+Afin d'obtenir la valeur de variables il faut la précéder de `$`
+
+## Variables utilisateur
+
+
+```sh
+politesse=bonjour
+test="$politesse wilfart"
+echo $test
+```
+
+- On peut créer une variable sans contenu associé avec: `b=`.
+- Une variable peut être supprimée en utilisant `unset b`
+- La commande readonly est la seule protection contre la suppression accidentelle de variables.
+- On peut utiliser la commande `declare` pour déclarer une variable de type numérique
+
+
+## Le quoting
+
+- Le simple quote entoure une chaine de caractères sans variables dedans. `'$politesse wiwi` retournera `$politesse wiwi`.
+- Le double quote entoure une chaine de caractères avec la présence possible d'arguments `"$politesse wiwi"` retournera le contenu de politesse associé à `wiwi`. 
+- Le backquoting \` \` permet d'assigner à une variable le résultat d'une commande: c=\`expr $a + $b \`. Le backquotting peut être remplacé par `$(<commande>)`.
+
+
+## Les commandes
+
+- `Expr` évalue une expression qui lui est passée sous forme de trois paramètres (opérande 1 et 2 + opérateur) `e=$(expr $a \< $b)`
+    - Le caractère `<` étant considéré comme un caractère de redirection, nous devons ajouté un caractère d'échappement `\` afin de dire à l'interpréteur qu'il s'agit de l'opérateur arithmétique `plus petit que`.
+
+- `test <EXPRESSION>` ou `test <OPTION>`, on peut le remplacer avec `[OPTION "$VARIABLE"]`
+    - La commande test retourne 0 si la réponse est positive.
+    - options sur fichiers: 
+        - `-e` : est-ce que le fichier existe ?
+        - `-f` : est-ce que c'est un fichier normal ?
+        - `-d` : est-ce que c'est un dossier ?
+        - `-c` : est-ce que le nom de fichier correspond à un fichier de périphérique orienté caractère ?
+        - `-b` : est-ce que le nom de fichier correspond à un fichier de périphérique orienté bloc ?
+        - `-p` : est-ce que le fichier existe et est un tube nommé (Named PIPE ou fichier FIFO)
+        - `-r` : est-ce que le fichier existe et est-ce que l'on a le droit en lecture dessus.
+        - `-w` : est-ce que le fichier existe et est-ce que l'on a le droit en écriture dessus.
+        - `-x` : est-ce que le fichier existe et est-ce qu'on a le droit d'exécution sur celui-ci.
+        - `-s` : est-ce que le fichier existe et est non vide.
+        - `-u` : est-ce que le fihcier existe et a son bit Set-UID positionné.
+        - `-k` : est-ce que le fihcier existe et son sticky bit est positionné.
+        - `-L` : est-ce que le fichier existe et est un lien symbolique.
+    - options sur chaines de caractères: ex: `[-n "BONJOUR"]`
+        - `-n` : est-ce que la longueur de la chaine de caractères n'est pas nulle.
+        - `-z` : est-ce que la longueur de la chaine de caractères est nulle.
+    - options sur des opérateurs numériques: ex: `[$a -eq 10]`
+        - `-eq` : égal
+        - `-ne` : non égal
+        - `-lt` : strictement plus petit
+        - `-gt` : strictement plus grand
+        - `-le` : plus petit ou égal
+        - `-ge` : plus grand ou égal
+
+## Les structures
+
+- La condition if se fait comme ceci: 
+```sh
+if expr1 then
+    ....
+
+elseif expr2 then
+    ....
+fi
+```
+- La structure case: 
+```sh
+case string in patList
+    body;
+    patList body;
+    .....
+esac
+```
+- La boucle for: 
+```sh
+for nom in <list> 
+do
+    ...
+done
+```
+- La structure select:
+```sh
+select variable in <list>
+do
+    ...
+done
+```
+- La boucle while et until:
+```sh
+while <condition>
+do
+    ...
+done
+```
+- La commande break: n est le nbre de niveau à remonter
+```sh
+break [n]
+```
+- La commande continue: n est le nbre d'itérations à passer
+```sh
+continue [n]
+```
+- La commande return / exit: n est la valeur
+```sh
+return [n]
+```
+
+## Le globbing
+- `*`: remplace n'importe quelle chaîne de caractères
+- `?`: remplace n'importe quel caractère
+- `[...]`: est remplacé par un des caractères entre crochets
+- `^`: signifie un caractère différent de
+
+## Les redirections
+- `<` : redirige l'entrée standard
+- `>` : redirige la sortie standard
+
+
+## Exercices
+
+- Faire un script prenant un argument
+    - S'il n'y a pas d'argument, on jette une erreur
+```sh
+if [ $# -eq 1 ]
+then
+    echo "OK"
+else
+    echo "NOT OK"
+    exit 1 # permet de fermer le programme
+fi
+```
+- Faire un script qui peremt de vérifier si un utilisateur existe ou pas
+```sh
+if [ $# -eq 1 ]
+then
+    id $1 > /dev/null 2> /dev/null
+    if [ $? -eq 0 ]
+    then
+        echo "User $1 does exist"
+    else
+        echo "User $1 does not exist"
+    fi
+else
+    echo "NOT OK"
+    exit 1
+fi
+```
