@@ -1,0 +1,71 @@
+`adduser la170174`
+
+`chmod 700 /home/la170174`
+
+`pwd` -> /home/la170174
+
+`ip a` -> lo = loopback | ensXX
+
+/etc/network/interfaces
+
+iface ensXX inet static
+    address 192.168.10.10
+    netmask 255.255.255.0
+    gateway 192.168.10.1
+
+/etc/resolv.conf -> dns-nameservers 192.168.10.9
+
+`apt-get update`
+
+/etc/apt/dist/sources.list
+
+`mkdir BackupConf` -> `ln /etc/*.conf ./BackupConf/`
+
+`groupadd Admin` -> `chown :Admin ./BackupConf/*`
+
+`chmod 740 ./BackupConf/*`
+
+`usermod -a -G Admin User1` `usermod -a -G Admin User2`
+
+`groups Admin`
+
+`tar -cf BackupConf.tar ./BackupConf/*`
+
+`fdisk /dev/sde` -> on suit le programme. `mkfs.ext4 /dev/sde1`
+
+`mount -t /data /dev/sde1`
+
+/etc/fstab ->  `/dev/disk/by-uuid/<UUID> /data ext4 defaults 0 0`
+
+`find /home/la170174/BackupConf/ -type f -mtime +30 -delete`
+
+`echo "Valeur: $i" >> output.txt`
+
+`pstree` -> savoir l'ordre d'exécution des commandes pour le script
+
+`ps -l` pour voir le niveau de priorité = donnez une importance à des programmes qui devraient être éxecutés en priorité
+
+pour fixer une priorité `ps aux` -> on récupère le PID du process qu'on veut augmenter et puis `renice <niveau souhaité entre -20 et 19> -p <PID>
+ou `nice -n <prio lvl> script.sh`
+
+`ps aux`. R = running, S = interruptible sleep, D = uninterruptible sleep, Z = defunct, T = stopped
+
+`ps -ef` -> on récupère le PID -> `kill -KILL <PID>`
+
+`top`
+
+```sh
+#!/bin/bash
+
+if [ $? -eq 0 ]
+then
+    echo "Usage: userExists.sh <User>"
+else
+    id $1 > /dev/null 2>1
+    if [ $? -eq 0 ]
+        echo "L'utilisateur $1 existe."
+
+    else
+        echo "L'utilisateur $1 n'existe pas."
+    fi
+fi

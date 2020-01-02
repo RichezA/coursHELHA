@@ -1,0 +1,121 @@
+1. Créer user
+
+adduser la170174
+
+2. Changer les droits du répertoire de travail
+
+chmod 700 /home/la170174
+
+3. Déconnecte + reconnexion
+
+Fermer et relancer putty
+
+4. Afficher répertoire courant
+
+pwd
+
+5. Authentifier l'interface réseau
+
+ip a 
+
+6. Mettre une ip statique:
+
+/etc/network/interfaces
+
+iface enp0s8 inet static
+    address 192.168.56.2
+    netmask 255.255.255.0
+
+7. Mettre à jour la liste des packages
+
+apt-get update
+
+8. Où se trouve les serveurs qui permettent d'obtenir la maj
+
+Dans /etc/apt/sources.list
+
+9. Créer un fichier "backupconf" dans le répertoire de travail avec des liens dur 
+de tous les fichiers .conf de /etc/
+
+ln /etc/*.conf ./backupconf/
+
+10. Créer un groupe Admin et changer l'appartenance des fichiers copiés
+
+/sbin/groupadd Admin
+chown :Admin ./backupconf/*.conf
+
+11. Modifier les droits pour que le groupe ait read et les autres rien
+
+chmod 040 *.conf
+
+12. En supposant user1 et user2, faire en sorte que les users appartiennent au groupe
+Secondaire admin (passwd + group)
+
+usermod -a -G Admin user1
+usermod -a -G Admin user2
+
+13. Verifier les users qui ont admin comme groupe secondaire
+
+groups user1
+groups user2
+
+14. Créer une archive
+
+tar -cf archive.tar backupconf/
+
+15. Ajouter un nouveau disque, identifié par sde dans dev -> créer une partition
+-> comment monter le disque dans /data -> automatiser le montage lors de l'amorçage
+du serveur
+
+/sbin/fdisk /dev/sde
+N -> new 
+W -> sauvegarde
+
+formatage ext4 -> /usr/sbin/mkfs.ext4 /dev/sde
+
+mount -t ext4 /dev/sd1 /data
+
+
+16. Script fait un echo, si en tache de fond, comment résoudre le problème de print?
+ Donnez arborescence processus menant au script + utilité
+ Vérifier la priorité du processus en cours d'exécution
+ Lister les processus, une commande donne l'info sur l'état du script avec des abréviations
+signification des abréviations + commande
+ Comment terminer un processus à la main ?
+ Avoir les stats en temps réel
+
+Résoudre tache de fond ( >> /print.txt)
+pstree <PID>
+
+ps aux -> STAT Stopped / Running
+
+kill -KILL <PID du process>
+top -> stats temps réel
+
+
+17. En utilisant id, créer un script pour déterminer si le nom d'un user en commentaire existe ou non
+ si pas de paramètres -> afficher la syntaxe à utiliser
+ Modifier le script pour faire en sorte que si l'utilisateur existe, indiquer s'il
+est connecté ou non
+
+```sh
+#!/bin/bash
+if [ $# -eq 1 ]
+then
+    id $1 > /dev/null 2>1
+    if [ $? -eq 0 ]
+    then
+        id -un > /dev/null 2>1
+        if [ $? == $1 ]
+        then
+            echo "User is logged in"
+        else
+            echo "User is not logged in"
+        fi
+    else
+        echo "User does not exist"
+    fi
+else
+    echo "Bad usage: <path_to_script>/script.sh <user_name>"
+fi
+```
