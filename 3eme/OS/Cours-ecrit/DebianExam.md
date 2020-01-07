@@ -1,45 +1,4 @@
-# Examen
-- se connecter en ssh sur la bécane du monsieur
-- créer un user avec le matricule comme userid. Mdp pareil
-- changer les droits d'accès son répertoire de travail de sorte qu'on soit le seul qui y ait accès. (change owner)
-- Une fois l'utilisateur créé on se déco du root et on se reco avec son propre compte
-- Après s'être authentifié, afficher répertoire courant (pwd)
-- Utiliser la commande permettant d'authentifier l'interface réseau de notre environnement (ip a)
-- imaginons que l'interface soit configurée en dhcp comment modifier (aller dans network/interfaces)
-- Si on a les droits root, comment faire la màj (apt-get update, apt-get upgrade)
-- Ou se situe la liste des serveurs de distribution (/etc/apt/list)
-- Créer dans le répertoire de travail un dossier BackupConf dans lequel on copie sous forme de liens durs tous les fichiers ayant l'extension conf présents dans le dossier etc
-- Créer un groupe nommé Admin et on change l'appartenance des fichiers copiés de sorte que ce groupe soit propriétaire des copies
-- Vous modifiez les droits de sorte que le groupe ait uniquement un accès en lecture (chmod)
-- En supposant que User1 et User2 existent, faites en sorte que ces deux utilisateurs appartiennent à Admin
-- Vérifier la liste des utilisateurs auant entre autres comme groupe secondaire Admin
-- Créer une archive compressée avec les ficiers pointés par vos liens durs obtenus au point b
-- Vous avez ajouté un nouveau disque dur dans votre système. Il est identifié par l'entrée sde dans le dossier /Dev
-	créer une partition primaire et la formater en ext4
-	Comment allez vous pratiquer pour monter la partition avec comme point de montage un dossier (mount)
-	Comment automatiser le montage lors de l'amorçage de votre serveur?
-- Votre système de fichiers comprend un dossier /Backup
-	
-
-- sachant qu'un script en tache de fond ne peut interagir avec stdin et stdout, comment régler le problème(on redirige stdout et pas de stdin en tache de fond)
-- Une fois la commande exécutée en tache de fond, voir l'arborescence des processus amenant au script (ps -aux)
-- Comment pouvez vous vérifier la priorité de votre processus en cours d'exécution, utilité de ces priorités ?
-- Lister les process en cours d'exécution, une des commandes dispo fournit une colonne correspondant à l'état de chaque process et comprenant notamment les abréviations RSDZ et TA et à quoi- correspondent les états
-- comment mettre fin à une tâche(kill avec le process ID)
-- Comment pouvez vous obtenir en temps réel les stats d'utilisation, en termes de ressources, de l'ensemble des différents process ? (top)
-		
-
-- en utilisant la commande id c'éer un script permettant de déterminer si le nom d'un utilisateur passé en paramètre existe pi âs en ayant accès 
-à l'écran d'affichage : L'utilisateur existe ou pas Si aucun paramètre n'est passé le script doit afficher la syntaxe de sa propre utilisation
-- Modifier le script de sort que si l'utilisateur existe, indiquer s'il est actuellement connecté ou pas.
-
-
-# Cours
-## Paramétrages Linux
-
-- On utilise toujours un compte à accès restreint et ensuite on exécute les commandes en mode superutilisateur. De cette façon, si l'on trouve le mot de passe de notre utilisateur, le "hacker" n'a aucun accès au superutilisateur.
-
-- On choisit des mot de passe différents ainsi qu'un nom d'utilisateur assez dur à trouver pour garantir une sécurité maximale.
+# Matière exam
 
 ## Types de disques durs
 
@@ -233,11 +192,6 @@ On utilise la commande `chmod` rwx|rwx|rwx
                                421|421|421 -> octal
 Pour mettre un fichier en RW pour soi et r pour le groupe SEULEMENT, on utilisera la commande: `chmod 640 <nomdefichier>.ext`
 
-On peut créer un script basique : 
-```sh
-#!/bin/sh
-echo "toto"
-```
 Si l'on demande à exécuter le fichier, la permission nous sera, par défaut, refusée, on pourra donc ajouter une permission rwx (read/write/exec) pour soi et r pour le groupe SEULEMENT
 `chmod 740 <nomduscript>.sh`
 
@@ -271,67 +225,6 @@ cd /root
 cat données_sensibles.txt
 ```
 
-
-## RAID
-
-RAID0 (stripping) => 2 disques mini. Les disques fonctionnent en parallèle
-RAID1 (mirroring) => 2 disques mini. Un des disques est une copie de l'autre
-RAID5 => 3 disques mini. 1 disque de défectueux
-RAID6 => 4 disques mini. 2 disques défectueux
-RAIDX0 => Un raid X combiné dans un RAID0
-
-- `apt-cache search mdadm`
-- `apt-get install mdadm`
-- On doit config les disques et créer une partition avec un nombre de blocs identiques sur chacun des disques. Pour une partition < que 2To -> fdisk sinon gdisk
-- Création de la grappe: 
-    - /dev/mdX : correspond au nom de la grappe
-    - --level=Y: indique le RAID Y souhaité
-    - --raid-devices=Z: le nombre de disques
-    - Le nom des disques
-- `./mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdc1 /dev/sdd1`
-- On peut visualiser l'état de création avec `cat /proc/mdstat`
-- Infos sur le disque virtuel créé :
-    - `./mdadm --detail /dev/md0`
-    - `./fdisk -l`
-- Formater le disque virtuel:
-    - `./mkfs.ext4 /dev/md0`
-- Monter le disque virtuel:
-    - `mkdir /MonRaid`
-    - `mount /dev/md0 /MonRaid/`
-- Etendre un RAID:
-    - `./mdadm --manage /dev/md0 --add /dev/sde1`
-    - A ce moment-là, le disque est pris comme disque de spare
-- Ajouter le stockage de spare au RAID:
-    - `./mdadm --grow /dev/md0 --raid-devices=4`
-    - `./mdadm --detail /dev/md0`
-    - `./resize2fs /dev/md0`
-
-### Mdadm et défaillance d'un disque
-- La tolérance dépend du type de RAID (aucune pour 0, un disque pour 5, deux pour 6)
-- Pour prévenir les défaillances il est préférable de détecter des erreurs de disque au plus bas niveau en utilisant les données SMART. 
-- Si SMART nous indique un problème sur le disque sdc: 
-    - Déclarer le disque défectueux dans la grappe.
-    - Supprimer le disque défectueux de la grappe.
-    - Remplacer le disque défectueux.
-
-- Le marquer comme défectueux:
-    - `./mdadm --manage /dev/md0 --set-faulty /dev/sdc1`
-- Le supprimer:
-    - `./mdadm --manage /dev/md0 --remove /dev/sc1`
-- Le remplacer:
-    - `./mdadm --manage /dev/md0 --add /dev/sdc1`
-
-### Sauvegarde configuration MDADM
-- `./madadm --examine --scan --verbose`
-- `cp /etc/mdadm/mdadm.conf /etc/mdadm/mdadm.conf.old`
-- `./mdadm --examine --scan --verbose >> /etc/mdadm/mdadm/conf`
-- `./update-initramfs -u -k all`
-
-### MDADM et le monitoring
-- On peut éditer le fichier mdadm.conf et modifier la ligne:
-    - `MAILADDR root` en remplaçant root par notre adresse mail.
-    - L'envoi d'un mail nécessite un agent relai smtp installé sur l'environnement Linux
-
 ## Création d'un utilisateur
 - Utilisation de la commande `adduser` -> crée l'utilisateur toto, le groupe primaire auquel il appartient (toto), le répertoire du user dans /home/ et /bin/bash
 
@@ -358,8 +251,7 @@ RAIDX0 => Un raid X combiné dans un RAID0
 - Gestion des resources
 - `ps aux` : Permet un standard d'affichage
 - `ps -ef` : Permet de montrer les PIDS et PPID (Parent Process Identifier): 
-
-![ps-ef example](./imgs/ps-ef.png)
+- `ps -l`  : Affiche les priorités
 
 Une ligne : `<group> <PID> <PPID> 0 <time> <command>`
 e.g.: `root 876 817 0 <time> sleep 2`
@@ -367,10 +259,21 @@ e.g.: `root 876 817 0 <time> sleep 2`
 
 - `pstree <user>`: Liste des processus sous forme d'arbre (possibilité de tirer sur un utilisateur).
 
-- rcX.d : runlevel, ils sont utilisés au démarrage par init.d pour démarrrer les bons services.
+- rcX.d : runlevel, ils sont utilisés au démarrage par init.d pour démarrrer les bons services. Les alias sont `runlevelX.target`
+    - 0 => poweroff.target == éteint le système
+    - 1 => rescue.target == mode utilisateur unique, mode maintenance
+    - 2,4 => multi-user.target == utilisateurs en mode non-graphique selon les distros.
+    - 3 => multi-user.target == utilisateurs en mode non-graphique
+    - 5 => graphical.target == utilisateur en mode graphique
+    - 6 => reboot.target == redémarre le système
+    - emergency => emergency.target == shell d'urgence.
 
+- `systemctl start/stop <service>.service` : démarre/stoppe un service
+- `systemctl enable/disable <service>.service` : active/désactive le démarre automatique du service lors du boot de la machine
 - `systemctl list-unit-files [ | grep enabled]` : retrouve tous les services existant [seulement ceux qui sont activés]
 - `systemctl kill <service>` : Envoie un signal d'arrêt (SIGTERM) au processus
+- `systemctl get-default` : Get le niveau de démarrage par défaut
+- `systemctl set-default multi-user.target` : Set le niveau de démarrage
 
 ## Créer un service
 
@@ -387,12 +290,12 @@ ExecStart=/usr/local/bin/<nom-de-service>.sh
 [Install]
 WamtedBy=multi-user.target
 ```
-
-- `systemctl get-default` : Get le niveau de démarrage par défaut
-- `systemctl set-default multi-user.target` : Set le niveau de démarrage
+- Unit comprend les informations génériques sur le service
+- Service comprend les informations du service en lui-même
+- Install comprend les circonstances et déclencheurs pour que le service démarre.
 
 - Créer un dossier dans `/usr/lib/` 
-- Copier le script dedans
+- Copier le script dedans et puis dans notre service, sous `[Service]`, coller le lien après `ExecStart=`
 
 ## Arrêter un service (bruteforce)
 - `kill -KILL <PID>`
